@@ -98,14 +98,15 @@
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 하나, 구술 평가', html:
     qttl('3', '수집되지 못한 데이터', '1', '구술 평가', '', 3) +
     demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
-         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',
+         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') +
+           go('https://greatsong.github.io/ds-danggok-2026/teacher/oral/', '구술 평가 앱 열기', true) + '</div>',
          shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 둘, AI 면접 앱', html:
     qttl('3', '수집되지 못한 데이터', '2', 'AI 면접 앱', '', 3) +
     demo(pts('생기부와 대학 자료로 기본 질문을 만들고 답마다 꼬리질문 | 끝나면 연습 메모와 다음 연습 목표 | 생기부 원문이 교사 노트북 밖으로 나가지 않는 구조') +
-         '<div class="gos">' + go('demo/interview/manual-demo.html', '시연 화면 열기') + '</div>',
+         '<div class="gos">' + go('http://localhost:4069/#/s/1/3/1', '시연 화면 열기') + '</div>',   // 진행자 맥북의 시연 서버(interview-coach/demo/시연서버_켜기.command, 가짜 학생만)
          shot('07-AI면접-시연.png')),
     notes: '구술 평가 시스템을 대입 면접 연습으로 옮긴 사례입니다. 가짜 학생 자료로 시연하겠습니다.\n가장 중요하게 본 것은 안정성과 개인정보입니다.' },
 
