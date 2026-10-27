@@ -38,7 +38,7 @@
 .src { font-size: 16px; color: var(--faint); }
 
 /* 질문 번호 */
-.qno { display: inline-block; font-size: 22px; font-weight: 800; color: #fff; background: var(--hub); border-radius: 99px; padding: 4px 14px; margin-right: 10px; vertical-align: middle; }
+.qno { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; font-size: 20px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #7365ff, #4a3ad6); box-shadow: 0 6px 16px rgba(85, 70, 232, .28); margin-right: 14px; vertical-align: middle; font-variant-numeric: tabular-nums; }
 .qs { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
 .qs li { font-size: 33px; line-height: 1.45; font-weight: 700; padding: 22px 28px; border-radius: 18px; background: var(--soft); border: 1px solid var(--line); }
 .qs li .qno { font-size: 20px; }
@@ -135,3 +135,29 @@
   .slide.cur *, .qrbig::after { animation: none !important; }
   .live, .live.on { transition: none; }
 }
+
+/* ── 장 제목 다듬기: 짧은 그라데이션 밑줄, 질문·체험 장은 두 층 ── */
+.ttl { flex-wrap: wrap; margin-bottom: 22px; }
+.ttl h2 { font-size: 48px; letter-spacing: -.03em; }
+.ttl::after { content: ""; display: block; order: 9; width: 100%; height: 5px; margin-top: 14px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--hub), var(--exp)) left / 64px 100% no-repeat; }
+.ttl.q { display: block; }
+.ttl.q .qrow { display: flex; align-items: center; gap: 0; margin-bottom: 10px; }
+.ttl.q .qph { font-size: 24px; font-weight: 700; color: var(--hub); letter-spacing: -.01em; }
+.ttl.q h2 { display: flex; align-items: center; gap: 16px; font-size: 52px; line-height: 1.15; }
+.ttl.q h2 .ai { display: inline-grid; place-items: center; min-width: 44px; height: 44px; padding: 0 12px; border-radius: 13px;
+  border: 2px solid #d6d2ff; background: var(--hub-soft); color: var(--hub); font-size: 24px; font-weight: 800; letter-spacing: 0; }
+.ttl.q.one { display: flex; align-items: center; flex-wrap: wrap; }
+.ttl.q.one .qno { width: 46px; height: 46px; font-size: 24px; border-radius: 14px; margin-right: 18px; }
+.ttl.q.one h2 { font-size: 50px; }
+.ttl.q.exp .qph { color: #b46e00; }
+.ttl.q.exp .qno { background: linear-gradient(135deg, #f5aa35, #d97a00); box-shadow: 0 6px 16px rgba(224, 138, 0, .28); }
+.ttl.q.exp::after { background-image: linear-gradient(90deg, var(--exp), #f5c66a); }
+@keyframes grow { from { background-size: 0 100%; } }
+.slide.cur .ttl::after { animation: grow .8s cubic-bezier(.16, .84, .3, 1) .35s backwards; }
+.slide.cur .ttl.q .qno, .slide.cur .ttl.q h2 .ai { animation: pop .55s cubic-bezier(.3, 1.4, .5, 1) .22s backwards; }
+.slide.cur .ttl.q h2 .ai { animation-delay: .32s; }
+
+/* 제목이 두 층이 되어도 캡처가 바닥을 넘지 않게 남은 높이에 맞춘다 */
+.demo .pic { height: 100%; }
+.demo .pic .shot, .url.top + .demo .pic .shot { max-height: min(650px, 100%); }
