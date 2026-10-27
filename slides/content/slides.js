@@ -86,7 +86,9 @@
   { sec: '네 질문', title: '질문 3) 답 하나, 구술 평가', html:
     ttl('<span class="qno">3</span>수집되지 못한 데이터 1) 구술 평가') +
     demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
-         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/#/3/4', '발표 자료 열기') + '</div>',
+         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') +
+           go('https://greatsong.github.io/ai-ta-project-assessment/#/9', '실제로 오가는 글', true) + '</div>' +
+         '<div class="src">시연은 발표 자료로 합니다. 학생 이름·학번·팀 이름은 가려져 있습니다</div>',
          shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
@@ -97,6 +99,13 @@
          '<div class="src">시연 화면은 가짜 학생 자료로 그리며 서버와 AI를 부르지 않습니다</div>',
          shot('07-AI면접-시연.png')),
     notes: '구술 평가 시스템을 대입 면접 연습으로 옮긴 사례입니다. 가짜 학생 자료로 시연하겠습니다.\n가장 중요하게 본 것은 안정성과 개인정보입니다.' },
+
+  { sec: '네 질문', title: '질문 3) 답 셋, 정보과 문항 나눔', html:
+    ttl('<span class="qno">3</span>수집되지 못한 데이터 3) 정보과 문항 나눔') +
+    demo(pts('학교명·교육청·출제자 이름 pdf에서 실제 삭제 | AI가 문항 나누고 문항마다 2022 개정 성취기준 제안, 확정은 올린 교사 | 승인된 시험지 올린 교사만 다른 교사 문항 열람') +
+         '<div class="gos">' + go('https://info-exam-bank.fly.dev', '정보과 문항 나눔 열기') + '</div>',
+         shot('13-문항나눔-첫화면.png')),
+    notes: '학교마다 시험 문항을 만들지만 학교 밖으로 모이지 않았습니다. 정보과 교사끼리 문항을 성취기준별로 모아 보고 토의하려고 만든 도구입니다.\n진행자 계정으로 로그인해 짧게 시연하겠습니다.\n성취기준 123개, 대상 과목 여섯 가지입니다. 원본 pdf는 관리자가 승인하면 삭제됩니다.' },
 
   { sec: '네 질문', title: '질문 4) 직접 해 보는 두 가지', html:
     ttl('<span class="qno">4</span>AI시대에 더 필요해진 능력') +
