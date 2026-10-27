@@ -9,3 +9,6 @@ slides/_src/
 slides/시연-링크.md
 slides/_캡처모음.jpg
 slides/qr/
+
+# clasp 연결 정보(로컬 전용)
+backend/.clasp.json

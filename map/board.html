@@ -192,10 +192,11 @@
 
 <script>
 /* ===== 연결 정보 =====
-   전국판(수업 나눔 발표용). 같은 배포 URL에 ?sheet=aileader 를 붙여 'aileader' 시트만 읽는다(선도교사 연수용).
-   Code.gs를 시트 라우팅판으로 교체하고 배포 관리에서 '새 버전'으로 업데이트하면(URL 유지) 동작.
-   URL 업데이트 전에도 지도는 그려집니다(핀만 안 찍힘). */
-const API_URL   = "https://script.google.com/macros/s/AKfycbzOL092fwyRUvax6rg67MjEHij_vCgB1lf9AbMfr_ru6ffa_IdKoRVBvU6jJR0x37PBIQ/exec";
+   선도교사 연수 전용 백엔드(backend/Code.gs)의 'aileader' 탭을 읽는다.
+   리허설은 board.html?sheet=test 로 'test' 탭을 읽는다(연수 데이터와 섞이지 않음).
+   백엔드가 응답하지 않아도 지도는 그려집니다(핀만 안 찍힘). */
+const SHEET = new URLSearchParams(location.search).get('sheet') === 'test' ? 'test' : 'aileader';
+const API_URL   = "https://script.google.com/macros/s/AKfycbydTyjI3QOAhm933UU_SQgf8szaDRgrgeW2nWCEUp-MkvkavPf9y3j_MhQ-11iL6oi0Sg/exec";
 const PHONE_URL = "https://greatsong.github.io/2026-ai-leader-training/map/";
 const HUB_URL   = "greatsong.github.io/2026-ai-leader-training/";
 /* ==================== */
@@ -551,7 +552,7 @@ fetch('sigungu.json').then(r=>r.json()).then(d=>{
 
 async function poll(){
   try{
-    const d = await (await fetch(API_URL + '?sheet=aileader')).json();
+    const d = await (await fetch(API_URL + '?sheet=' + SHEET)).json();
     const useTally = !!d.tally;
     const freshItems=[];
     (d.schools||[]).forEach(r=>{

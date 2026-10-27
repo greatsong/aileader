@@ -139,10 +139,10 @@
   </div>
 
 <script>
-/* 전국판(수업 나눔 발표용). 같은 배포 URL을 쓰되 payload의 sheet:'aileader'로
-   기존 스프레드시트의 'aileader' 시트(탭)에 따로 쌓는다(선도교사 연수용).
-   Code.gs를 시트 라우팅판으로 교체하고 배포 관리에서 '새 버전'으로 업데이트하면(URL 유지) 동작 */
-const API_URL = "https://script.google.com/macros/s/AKfycbzOL092fwyRUvax6rg67MjEHij_vCgB1lf9AbMfr_ru6ffa_IdKoRVBvU6jJR0x37PBIQ/exec";
+/* 선도교사 연수 전용 백엔드(backend/Code.gs, 스프레드시트 '261029_선도교사연수_학교지도').
+   연수 데이터는 'aileader' 탭에 쌓는다. 리허설은 주소 끝에 ?sheet=test 를 붙여 'test' 탭으로 보낸다. */
+const SHEET = new URLSearchParams(location.search).get('sheet') === 'test' ? 'test' : 'aileader';
+const API_URL = "https://script.google.com/macros/s/AKfycbydTyjI3QOAhm933UU_SQgf8szaDRgrgeW2nWCEUp-MkvkavPf9y3j_MhQ-11iL6oi0Sg/exec";
 
 let SCHOOLS = [], chosen = null, vibe = '';
 const $ = id => document.getElementById(id);
@@ -203,7 +203,7 @@ $('submitBtn').onclick = async ()=>{
   const btn = $('submitBtn'), orig = btn.textContent;
   btn.disabled = true; btn.textContent = '지도에 올리는 중… ⏳';   // 로딩 안내(전송에 1~2초 걸림)
   const payload = {
-    sheet:'aileader',   // 선도교사 연수 데이터는 'aileader' 시트(탭)로
+    sheet:SHEET,   // 연수 데이터는 'aileader' 탭, 리허설은 'test' 탭
     school:chosen[0], region:chosen[1], lat:chosen[2], lon:chosen[3], vibe, career,
     subject, question,
   };
