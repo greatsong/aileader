@@ -161,3 +161,12 @@
 /* 제목이 두 층이 되어도 캡처가 바닥을 넘지 않게 남은 높이에 맞춘다 */
 .demo .pic { height: 100%; }
 .demo .pic .shot, .url.top + .demo .pic .shot { max-height: min(650px, 100%); }
+
+/* ── 질문 1: 팅커비스 ── */
+.tink { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+.tink::before { content: ""; position: absolute; width: 720px; height: 720px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(90, 214, 200, .22), rgba(85, 70, 232, .08) 45%, transparent 70%); }
+.tink img { position: relative; height: 100%; max-height: 640px; width: auto; animation: hover 4.6s ease-in-out infinite; filter: drop-shadow(0 26px 30px rgba(31, 29, 43, .16)); }
+@keyframes hover { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-16px) rotate(1.2deg); } }
+.slide.cur .tink { animation: floatIn 1s cubic-bezier(.16, .84, .3, 1) .2s backwards; }
+@media (prefers-reduced-motion: reduce) { .tink img { animation: none; } }

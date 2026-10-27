@@ -74,7 +74,7 @@
 
   { sec: '네 질문', title: '질문 1) 10년 전, 팅커벨에 대한 생각', html:
     qttl('1', '', '', '10년 전, 팅커벨에 대한 저의 생각') +
-    '<div class="wait"></div>',
+    '<div class="tink"><img alt="" src="img/tinkervis.webp"></div>',   // 팅커비스 그림: ai-ta-project-assessment/raw/art/fig_ai.png
     notes: '' },
 
   { sec: '네 질문', title: '질문 2) 답 하나, 커리큘럼 위버', html:
