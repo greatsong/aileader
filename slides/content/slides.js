@@ -1,7 +1,7 @@
 /* 1일차 슬라이드 내용. 장 제목은 고정, 핵심 줄·항목·노트는 솔라 프로4 집필(_src/solar_day1_v1.md, solar_day1_fix1.md).
    [data-s="k"]는 k번째 클릭부터 보인다. notes는 N키 발표자 노트(줄마다 한 문단). 2일차 내용은 넣지 않는다(연수생 비공개). */
 (function () {
-  var HUB = 'greatsong.github.io/2026-ai-leader-training';
+  var HUB = 'greatsong.github.io/aileader';
   var C = function (f) { return 'captures/' + encodeURI(f); };
   var ttl = function (t, tag) { return '<div class="ttl"><h2>' + t + '</h2>' + (tag ? '<span class="tag">' + tag + '</span>' : '') + '</div>'; };
   var kick = function (t) { return '<p class="kick">' + t + '</p>'; };
@@ -38,20 +38,15 @@
     notes: '학교를 올리면 앞 화면 지도에 바로 표시됩니다. 궁금한 것을 적어 주시면 오늘 이야기에 반영하겠습니다.\n올라오는 동안 지도를 함께 보며 어느 지역에서 오셨는지 짚어 보겠습니다. 활동 시간은 5분입니다.' },
 
   // ── 인트로 ───────────────────────────────────────────
-  { sec: '인트로', title: '10년 후의 세상', html:
-    '<div class="full"><img alt="10년 후의 세상을 예측할 수 있을까?" src="img/source-05.png"></div>',
-    notes: '10년 후의 세상을 예측할 수 있을지 함께 생각해 보겠습니다.\n답을 기다리지 않고 다음 화면으로 넘어가겠습니다.' },
-
-  { sec: '인트로', title: '아톰의 세상과 비트의 세상', steps: 2, html:
-    '<div class="full">' +
-      '<div class="layer" data-u="1"><img alt="" src="img/source-06.png"></div>' +
-      '<div class="layer off" data-s="1" data-u="2"><img alt="" src="img/source-07.png"></div>' +
-      '<div class="layer off" data-s="2"><img alt="" src="img/source-09.png"></div>' +
-      '<div class="over" data-s="2">교실과 사람이 있는 아톰의 세상, 정보와 디지털 도구의 비트의 세상, 오늘은 둘을 잇는 사례</div>' +
-      '<span class="src">출처: JTBC 차이나는 클라스(사진, 닐 거센필드)</span>' +
-      go('https://greatsong.github.io/vibe1-gg/intro-keynote.html', '인트로 키노트', true) +
-    '</div>',
-    notes: '닐 거센필드는 세상을 아톰의 세상과 비트의 세상으로 구분했습니다. 아톰은 물질이고 비트는 정보입니다.\n교사가 만드는 도구는 비트의 세상에 있습니다. 풀려는 문제는 교실이라는 아톰의 세상에 있습니다.' },
+  // 인트로 키노트(intro.html)를 통째로 끼운다. 덱의 단계 0~7이 키노트의 장 1~8
+  { sec: '인트로', title: '아톰의 세상과 비트의 세상', steps: 7, html:
+    '<div class="intro"><iframe src="intro.html?embed=1" title="인트로 키노트: 아톰의 세상과 비트의 세상"></iframe></div>',
+    onStep: function (el, step) {
+      el.dataset.k = step;
+      var f = el.querySelector('iframe'), w = f && f.contentWindow;
+      if (w && w.KN) w.KN.go(step);
+    },
+    notes: '닐 거센필드는 세상을 아톰의 세상과 비트의 세상으로 구분했습니다. 아톰은 물질이고 비트는 정보입니다.\n10년 후의 세상을 예측할 수 있을지 함께 생각해 보겠습니다. 답을 기다리지 않고 다음 화면으로 넘어가겠습니다.\n교사가 만드는 도구는 비트의 세상에 있습니다. 풀려는 문제는 교실이라는 아톰의 세상에 있습니다.' },
 
   // ── 네 질문 ──────────────────────────────────────────
   { sec: '네 질문', title: '제가 해 온 네 가지 질문', steps: 4, html:
