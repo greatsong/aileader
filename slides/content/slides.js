@@ -40,8 +40,16 @@
   var leveler = function (vals) {
     var nz = vals.filter(function (v) { return v > 0; }).sort(function (a, b) { return a - b; });
     var q = function (p) { return nz.length ? nz[Math.min(nz.length - 1, Math.floor(p * (nz.length - 1)))] : 0; };
-    var t = [q(.25), q(.5), q(.75)];
-    return function (v) { return v <= 0 ? 0 : v <= t[0] ? 1 : v <= t[1] ? 2 : v <= t[2] ? 3 : 4; };
+    var t = [q(.25), q(.5), q(.75)], max = nz.length ? nz[nz.length - 1] : 0;
+    var f = function (v) { return v <= 0 ? 0 : v <= t[0] ? 1 : v <= t[1] ? 2 : v <= t[2] ? 3 : 4; };
+    // 범례: 단계마다 실제로 들어가는 커밋 수 범위(같은 값이 겹쳐 빈 단계면 '·')
+    var lo = [0, 1, t[0] + 1, t[1] + 1, t[2] + 1], hi = [0, t[0], t[1], t[2], max];
+    f.ranges = lo.map(function (a, i) { var b = hi[i]; return a > b ? '·' : a === b ? String(a) : a + '–' + b; });
+    return f;
+  };
+  var legendOf = function (lv, unit) {
+    return '<div class="hm-leg"><span class="u">' + unit + '</span>' + lv.ranges.map(function (r, i) {
+      return '<span class="k"><i class="l' + i + '"></i><small>' + r + '</small></span>'; }).join('') + '</div>';
   };
   var heatDays = function () {
     var end = new Date(CM.to + 'T00:00:00'), m1 = end.getMonth() + 1, vals = [], k, d, m;
@@ -57,7 +65,7 @@
         h += '<i class="l' + lv(v) + '" style="--d:' + ((m - 1) * 40 + d * 14) + 'ms" title="' + m + '월 ' + d + '일 · ' + v + '개"></i>';
       }
     }
-    return h + '</div>';
+    return h + '</div>' + legendOf(lv, '하루 커밋 수');
   };
   var heatWeek = function () {
     var names = ['월', '화', '수', '목', '금', '토', '일'], vals = [], w, hr;
@@ -71,9 +79,8 @@
         h += '<i class="l' + lv(v) + '" style="--d:' + (w * 60 + hr * 22) + 'ms" title="' + names[w] + '요일 ' + hr + '시 · ' + v + '개"></i>';
       }
     }
-    return h + '</div>';
+    return h + '</div>' + legendOf(lv, '1~10월 합계 커밋 수');
   };
-  var legend = '<div class="hm-leg">적음<i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>많음</div>';
   var demo = function (side, pic) { return '<div class="demo"><div class="side">' + side + '</div><div class="pic">' + pic + '</div></div>'; };
 
   window.SLIDES = [
@@ -107,9 +114,9 @@
   // ── 네 질문 ──────────────────────────────────────────
   // 올해 커밋: 월일별, 요일별·시간대별(진행자 맥북의 로컬 저장소 기준)
   { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 월일별', html: function () {
-    return ttl('2026년 커밋 히트맵', '월일별') + heatDays() + legend; }, notes: '' },
+    return ttl('2026년 커밋 히트맵', '월일별') + heatDays(); }, notes: '' },
   { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 요일별·시간대별', html: function () {
-    return ttl('2026년 커밋 히트맵', '요일별·시간대별') + heatWeek() + legend; }, notes: '' },
+    return ttl('2026년 커밋 히트맵', '요일별·시간대별') + heatWeek(); }, notes: '' },
 
   { sec: '바이브 코딩 프로젝트', title: '제가 해 온 네 가지 질문', steps: 4, html:
     ttl('제가 해 온 네 가지 질문') +
