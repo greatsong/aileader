@@ -15,8 +15,20 @@ button { font: inherit; color: inherit; }
 /* 무대 */
 #viewport { position: fixed; inset: 0; overflow: hidden; }
 #stage { width: 1600px; height: 900px; position: absolute; left: 50%; top: 50%; background: var(--paper); transform-origin: center center; box-shadow: 0 20px 80px rgba(0,0,0,.45); overflow: hidden; }
-.slide { position: absolute; inset: 0; padding: 92px 88px 70px; display: none; flex-direction: column; }
-.slide.cur { display: flex; }
+.slide { position: absolute; inset: 0; padding: 92px 88px 70px; display: flex; flex-direction: column; }
+
+/* 장 전환: 들어오는 장은 진행 방향에서 밀려 들어오며 나타나고, 나가는 장(.was)은 반대쪽으로 비켜나며 사라진다.
+   쉬는 장은 다음에 들어올 자리에 숨어 있다(전환 없이). fx-fade 장은 제자리에서 겹쳐 바뀐다 */
+#stage { --in: 70px; --out: -70px; }
+#stage[data-dir="b"] { --in: -70px; --out: 70px; }
+.slide { visibility: hidden; opacity: 0; transform: translateX(var(--in)); pointer-events: none; z-index: 0; }
+.slide.cur { visibility: visible; opacity: 1; transform: none; pointer-events: auto; z-index: 2;
+  transition: opacity .55s ease, transform .75s cubic-bezier(.16, .84, .3, 1); }
+.slide.was { visibility: hidden; opacity: 0; transform: translateX(var(--out)); z-index: 1;
+  transition: opacity .45s ease, transform .75s cubic-bezier(.16, .84, .3, 1), visibility 0s linear .75s; }
+.slide.fx-fade, .slide.fx-fade.was { transform: none; }
+.slide.fx-fade.cur { transition: opacity .8s ease; }
+@media (prefers-reduced-motion: reduce) { .slide.cur, .slide.was { transition: none; } }
 
 /* 머리: 섹션 칩 */
 #bar { position: absolute; top: 0; left: 0; right: 0; height: 58px; display: flex; align-items: center; gap: 6px; padding: 0 28px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.96); z-index: 5; }

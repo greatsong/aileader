@@ -76,3 +76,62 @@
 
 /* 위쪽에 주소 띠가 있는 장은 캡처 높이를 줄인다 */
 .url.top + .demo .pic .shot { max-height: 560px; }
+
+/* ── 표지 다음: 지도 QR ── */
+.qrstage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 84px; }
+.qrbig { width: 560px; height: 560px; padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 30px; box-shadow: 0 20px 56px rgba(31,29,43,.14); position: relative; flex: none; }
+.qrbig img { width: 100%; height: 100%; display: block; }
+.qrbig::after { content: ""; position: absolute; inset: -16px; border-radius: 40px; border: 3px solid var(--hub); opacity: 0; animation: qring 2.6s ease-out 1.2s infinite; pointer-events: none; }
+@keyframes qring { 0% { opacity: .55; transform: scale(.97); } 100% { opacity: 0; transform: scale(1.08); } }
+.qrurl { font-family: var(--mono, ui-monospace); font-size: 56px; font-weight: 800; line-height: 1.32; letter-spacing: -.01em; color: var(--ink); }
+
+/* ── 실제 화면 끼우기: from 요소 가운데에서 원으로 펼쳐져 무대를 덮는다 ── */
+.live { position: absolute; inset: 0; z-index: 40; background: #fff; visibility: hidden;
+  clip-path: circle(0px at var(--cx, 50%) var(--cy, 50%));
+  transition: clip-path .7s cubic-bezier(.7, 0, .3, 1), visibility 0s linear .7s; }
+.live.on { visibility: visible; clip-path: circle(1900px at var(--cx, 50%) var(--cy, 50%));
+  transition: clip-path 1.05s cubic-bezier(.65, 0, .25, 1); }
+.live iframe { width: 100%; height: 100%; border: 0; display: block; }
+#stage:has(.slide.cur .live.on) #bar, #stage:has(.slide.cur .live.on) #foot { visibility: hidden; }
+
+/* ── 장에 들어올 때 차례로 나타나기(단계 공개 요소 [data-s]는 건드리지 않는다) ── */
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } }
+@keyframes fromL { from { opacity: 0; transform: translateX(-30px); } }
+@keyframes fromR { from { opacity: 0; transform: translateX(34px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.9); } }
+@keyframes floatIn { from { opacity: 0; transform: translateY(40px) scale(.97); } }
+@keyframes settle { from { transform: scale(1.04); } }
+.slide.cur .cover > * { animation: rise .9s cubic-bezier(.16, .84, .3, 1) backwards; }
+.slide.cur .cover > :nth-child(1) { animation-delay: .15s; }
+.slide.cur .cover > :nth-child(2) { animation-delay: .32s; }
+.slide.cur .cover > :nth-child(3) { animation-delay: .52s; }
+.slide.cur .ttl:not([data-s]) { animation: fromL .65s cubic-bezier(.16, .84, .3, 1) .08s backwards; }
+.slide.cur .pts:not([data-s]) > li { animation: rise .6s cubic-bezier(.16, .84, .3, 1) backwards; }
+.slide.cur .pts > li:nth-child(1) { animation-delay: .25s; }
+.slide.cur .pts > li:nth-child(2) { animation-delay: .35s; }
+.slide.cur .pts > li:nth-child(3) { animation-delay: .45s; }
+.slide.cur .pts > li:nth-child(4) { animation-delay: .55s; }
+.slide.cur .demo .pic { animation: floatIn .9s cubic-bezier(.16, .84, .3, 1) .28s backwards; }
+.slide.cur .gos .go { animation: pop .5s cubic-bezier(.3, 1.4, .5, 1) .6s backwards; }
+.slide.cur .gos .go + .go { animation-delay: .7s; }
+.slide.cur .url:not([data-s]) { animation: pop .65s cubic-bezier(.3, 1.3, .5, 1) .18s backwards; }
+.slide.cur .dests .d { animation: rise .55s cubic-bezier(.16, .84, .3, 1) backwards; }
+.slide.cur .dests .d:nth-child(1) { animation-delay: .4s; }
+.slide.cur .dests .d:nth-child(2) { animation-delay: .5s; }
+.slide.cur .dests .d:nth-child(3) { animation-delay: .6s; }
+.slide.cur .dests .d:nth-child(4) { animation-delay: .7s; }
+.slide.cur .twin .card { animation: floatIn .8s cubic-bezier(.16, .84, .3, 1) backwards; }
+.slide.cur .twin .card:nth-child(1) { animation-delay: .2s; }
+.slide.cur .twin .card:nth-child(2) { animation-delay: .38s; }
+.slide.cur .flow .row { animation: fromL .7s cubic-bezier(.16, .84, .3, 1) backwards; }
+.slide.cur .flow .row:nth-child(1) { animation-delay: .2s; }
+.slide.cur .flow .row:nth-child(2) { animation-delay: .45s; }
+.slide.cur .stat30 { animation: pop .7s cubic-bezier(.3, 1.3, .5, 1) .2s backwards; }
+.slide.cur .qrbig { animation: pop .8s cubic-bezier(.3, 1.35, .5, 1) .15s backwards; }
+.slide.cur .qrurl { animation: fromR .8s cubic-bezier(.16, .84, .3, 1) .4s backwards; }
+.slide.cur .full img { animation: settle 1.8s cubic-bezier(.16, .84, .3, 1) backwards; }
+#bar .sec { transition: background .3s, color .3s; }
+@media (prefers-reduced-motion: reduce) {
+  .slide.cur *, .qrbig::after { animation: none !important; }
+  .live, .live.on { transition: none; }
+}

@@ -7,6 +7,23 @@
   var pts = function (s, attr) { return '<ul class="pts"' + (attr || '') + '>' + s.split(' | ').map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; };
   var shot = function (f) { return '<img class="shot" alt="" src="' + C(f) + '">'; };
   var go = function (href, label, sub) { return '<a class="go' + (sub ? ' sub' : '') + '" href="' + href + '" target="_blank" rel="noopener">' + label + ' ↗</a>'; };
+  // 실제 화면(앞 화면 지도·연수 메인)을 끼우는 상자. from 요소 가운데에서 원으로 펼쳐진다
+  var live = function (src, title, from) { return '<div class="live" data-src="' + src + '" data-from="' + from + '"><iframe title="' + title + '"></iframe></div>'; };
+  var hookKeys = function (f) {   // 끼운 화면을 누른 뒤에도 → ← 와 리모컨(PageDown/Up)은 덱이 받는다
+    try { f.contentDocument.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k === 'ArrowRight' || k === 'PageDown') { e.preventDefault(); window.DECK.next(); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); window.DECK.prev(); }
+    }); } catch (e) {}
+  };
+  var liveStep = function (el, step) {
+    var box = el.querySelector('.live'), f = box.querySelector('iframe');
+    if (!f.getAttribute('src')) { f.addEventListener('load', function () { hookKeys(f); }); f.src = box.dataset.src; }   // 장에 들어오면 미리 불러 둔다
+    var o = el.querySelector(box.dataset.from), x = 0, y = 0, n = o;
+    while (n && n !== el) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+    if (o) { box.style.setProperty('--cx', (x + o.offsetWidth / 2) + 'px'); box.style.setProperty('--cy', (y + o.offsetHeight / 2) + 'px'); }
+    box.classList.toggle('on', step >= 1);
+  };
   var demo = function (side, pic) { return '<div class="demo"><div class="side">' + side + '</div><div class="pic">' + pic + '</div></div>'; };
 
   window.SLIDES = [
@@ -19,29 +36,23 @@
     '</div>',
     notes: '자, 오늘은 제가 직접 만든 수업용 도구를 보여 드리고 두 앱을 함께 체험하는 시간입니다.\n저는 당곡고등학교 정보 교사로, 올해 2월부터 수업용 도구를 직접 만들어 수업에 사용하고 있습니다.\n먼저 제가 만든 도구 사례를 간단히 살펴보겠습니다.' },
 
-  { sec: '시작', title: '연수 메인 접속', html:
-    ttl('연수 메인 접속') +
-    '<div class="url"><div class="lab">노트북 주소창에 입력</div><div class="u">' + HUB + '</div></div>' +
-    '<div class="dests">' +
-      '<div class="d">🗺️ 우리 학교를 지도에</div><div class="d">🤖 튜링 테스트</div>' +
-      '<div class="d">🧊 프롬프트 코딩</div><div class="d">🖼️ 웹앱 갤러리</div>' +
-    '</div>',
-    notes: '지금 노트북에서 이 주소를 입력해 주십시오.\n오늘 들어가는 곳은 모두 이 페이지의 링크로 연결됩니다. 열어 둔 채로 진행하겠습니다.' },
-
-  // ── 학교 ─────────────────────────────────────────────
-  { sec: '학교', title: '우리 학교를 지도에', html:
+  // 표지 다음: 지도 QR을 크게. 화면을 누르면(1단계) QR 자리에서 실제 앞 화면 지도가 원으로 펼쳐진다
+  { sec: '시작', title: '우리 학교를 지도에', steps: 1, html:
     ttl('우리 학교를 지도에') +
-    demo(pts("연수 메인에서 '우리 학교를 지도에' 누르기 | 학교 이름 검색하기 | 담당 과목·교육경력·궁금한 것 적고 올리기") +
-         '<div class="gos">' + go('../map/board.html', '앞 화면 지도 열기') + '</div>',
-         shot('01-학교지도-연수판.png')),
+    '<div class="qrstage">' +
+      '<div class="qrbig"><img alt="" src="../assets/qr/map.svg"></div>' +
+      '<div class="qrurl">greatsong.github.io/<br>aileader/map</div>' +
+    '</div>' +
+    live('../map/board.html', '앞 화면 지도', '.qrbig'),
+    onStep: liveStep,
     notes: '학교를 올리면 앞 화면 지도에 바로 표시됩니다. 궁금한 것을 적어 주시면 오늘 이야기에 반영하겠습니다.\n올라오는 동안 지도를 함께 보며 어느 지역에서 오셨는지 짚어 보겠습니다. 활동 시간은 5분입니다.' },
 
   // ── 소개 ─────────────────────────────────────────────
   // 세종과학고 특강(260923) 자기소개 2~4장 원본 그대로(neural-explorer/public/lecture-assets/source/slide-02~04.png)
   // intro-02만 고침(2026-10-27): 서울대 사범대학 강사 2020 – 2026.8, '2020 – 2022 재단법인 카카오임팩트 이사' 줄 추가(줄 간격을 조금 좁혀 맞춤)
-  { sec: '소개', title: '제 소개 1', html: '<div class="full"><img alt="" src="img/intro-02.png"></div>', notes: '' },
-  { sec: '소개', title: '제 소개 2', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
-  { sec: '소개', title: '제 소개 3', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
+  { sec: '소개', title: '제 소개 1', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-02.png"></div>', notes: '' },
+  { sec: '소개', title: '제 소개 2', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
+  { sec: '소개', title: '제 소개 3', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
 
   // ── 네 질문 ──────────────────────────────────────────
   { sec: '네 질문', title: '제가 해 온 네 가지 질문', steps: 4, html:
@@ -143,5 +154,17 @@
          '<div class="gos">' + go('../gallery/#submit', '갤러리에 올리기') + '</div>',
          shot('12-갤러리.png')),
     notes: '오늘 체험과 사례를 보며 떠오른 학교의 문제를 갤러리에 남겨 주십시오. 선택 사항입니다.\n둘째 날 활동은 내일 안내하겠습니다. 감사합니다.' },
+
+  // 마지막: 연수 주소. 화면을 누르면(1단계) 주소 상자 자리에서 실제 연수 메인이 펼쳐져 직접 시연한다
+  { sec: '마무리', title: '연수 메인 접속', steps: 1, html:
+    ttl('연수 메인 접속') +
+    '<div class="url"><div class="lab">노트북 주소창에 입력</div><div class="u">' + HUB + '</div></div>' +
+    '<div class="dests">' +
+      '<div class="d">🗺️ 우리 학교를 지도에</div><div class="d">🤖 튜링 테스트</div>' +
+      '<div class="d">🧊 프롬프트 코딩</div><div class="d">🖼️ 웹앱 갤러리</div>' +
+    '</div>' +
+    live('../', '연수 메인', '.url'),
+    onStep: liveStep,
+    notes: '지금 노트북에서 이 주소를 입력해 주십시오.\n오늘 들어가는 곳은 모두 이 페이지의 링크로 연결됩니다. 열어 둔 채로 진행하겠습니다.' },
   ];
 })();

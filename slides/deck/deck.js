@@ -10,7 +10,7 @@
   // 슬라이드 만들기
   S.forEach(function (s, i) {
     var el = document.createElement('section');
-    el.className = 'slide';
+    el.className = 'slide' + (s.fx ? ' fx-' + s.fx : '');
     el.dataset.i = i;
     el.innerHTML = (typeof s.html === 'function' ? s.html(ST) : s.html);
     s.el = el;
@@ -102,7 +102,11 @@
     if (ov.classList.contains('on')) buildOverview();
   }
   function go(i, st, anim) {
-    cur = Math.max(0, Math.min(S.length - 1, i)); step = Math.max(0, Math.min(S[cur].steps || 0, st)); render(anim);
+    var was = cur;
+    cur = Math.max(0, Math.min(S.length - 1, i)); step = Math.max(0, Math.min(S[cur].steps || 0, st));
+    // 장이 바뀌면 나가는 장에 .was, 방향(앞으로 f·뒤로 b)을 무대에 적어 전환 효과가 방향을 따르게 한다
+    if (cur !== was) { stage.dataset.dir = cur > was ? 'f' : 'b'; void S[cur].el.offsetWidth; S.forEach(function (x, j) { x.el.classList.toggle('was', j === was); }); }   // offsetWidth: 바뀐 방향을 들어오는 장의 출발 자리에 먼저 반영
+    render(anim);
   }
   function next() { var s = S[cur]; if (step < (s.steps || 0)) go(cur, step + 1, true); else if (cur < S.length - 1) go(cur + 1, 0, false); }
   function prev() { if (step > 0) go(cur, step - 1, true); else if (cur > 0) go(cur - 1, S[cur - 1].steps || 0, false); }
