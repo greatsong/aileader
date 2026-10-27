@@ -98,8 +98,7 @@
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 하나, 구술 평가', html:
     qttl('3', '수집되지 못한 데이터', '1', '구술 평가', '', 3) +
     demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
-         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') +
-           go('https://greatsong.github.io/ds-danggok-2026/teacher/oral/', '구술 평가 앱 열기', true) + '</div>',
+         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',   // 앱 시연은 진행자가 따로 연 브라우저에서
          shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
