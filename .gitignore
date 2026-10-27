@@ -3,3 +3,9 @@ _workspace/
 ~$*
 .claude/
 .gstack/
+
+# 슬라이드 내부 작업 파일(공개하지 않음)
+slides/_src/
+slides/시연-링크.md
+slides/_캡처모음.jpg
+slides/qr/

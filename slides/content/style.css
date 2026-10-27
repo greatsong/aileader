@@ -1,0 +1,78 @@
+/* 선도교사 연수 1일차 덱의 장면. 엔진(deck/deck.css) 위에 얹는다 */
+:root { --hub: #5546e8; --hub-soft: #eeecff; --exp: #e08a00; --exp-soft: #fff4e0; }
+
+/* 표지 */
+.cover { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 26px; padding-left: 20px; }
+.cover .eyebrow { font-size: 24px; font-weight: 700; color: var(--hub); letter-spacing: .02em; }
+.cover h1 { margin: 0; font-size: 76px; line-height: 1.18; letter-spacing: -.03em; font-weight: 800; }
+.cover h1 .a { color: var(--hub); }
+.cover .who { font-size: 28px; color: var(--muted); }
+.cover .who b { color: var(--ink); }
+
+/* 핵심 줄 */
+.kick { font-size: 30px; line-height: 1.45; color: var(--muted); margin: 0 0 28px; font-weight: 600; }
+
+/* 큰 주소 */
+.url { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 34px 30px; border-radius: 26px; background: var(--hub-soft); border: 2px solid #d6d2ff; }
+.url .lab { font-size: 24px; font-weight: 700; color: var(--hub); }
+.url .u { font-family: var(--mono, ui-monospace); font-size: 50px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); text-align: center; white-space: nowrap; }
+.url .u.sm { font-size: 40px; }
+.url.top { flex-direction: row; justify-content: center; gap: 24px; padding: 18px 26px; margin-bottom: 22px; }
+.url.top .lab { font-size: 22px; white-space: nowrap; }
+.url.exp { background: var(--exp-soft); border-color: #ffdca3; }
+.url.exp .lab { color: #b46e00; }
+.dests { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 30px; }
+.dests .d { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 22px 20px; font-size: 25px; font-weight: 700; text-align: center; }
+.dests .d small { display: block; font-size: 18px; font-weight: 500; color: var(--muted); margin-top: 6px; }
+
+/* 시연 장: 왼쪽 글, 오른쪽 캡처 */
+.demo { flex: 1; min-height: 0; display: grid; grid-template-columns: 520px 1fr; gap: 40px; }
+.demo .side { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.demo .pic { min-width: 0; min-height: 0; display: flex; align-items: flex-start; justify-content: center; }
+.demo .pic .shot { max-height: 650px; }
+.go { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; padding: 14px 24px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 23px; font-weight: 800; text-decoration: none; }
+.go:hover { background: var(--hub); }
+.go.sub { background: #fff; color: var(--ink); border: 1.5px solid var(--ink); }
+.go small { font-weight: 500; opacity: .75; font-size: 17px; }
+.gos { display: flex; gap: 12px; flex-wrap: wrap; }
+.src { font-size: 16px; color: var(--faint); }
+
+/* 질문 번호 */
+.qno { display: inline-block; font-size: 22px; font-weight: 800; color: #fff; background: var(--hub); border-radius: 99px; padding: 4px 14px; margin-right: 10px; vertical-align: middle; }
+.qs { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+.qs li { font-size: 33px; line-height: 1.45; font-weight: 700; padding: 22px 28px; border-radius: 18px; background: var(--soft); border: 1px solid var(--line); }
+.qs li .qno { font-size: 20px; }
+
+/* 전체 그림 장 */
+.full { position: absolute; inset: 58px 0 40px; display: flex; align-items: center; justify-content: center; background: #fff; }
+.full img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.full .over { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%); background: rgba(31,29,43,.86); color: #fff; font-size: 34px; font-weight: 800; padding: 18px 34px; border-radius: 18px; white-space: nowrap; }
+.full .src { position: absolute; left: 30px; bottom: 14px; }
+.full .go { position: absolute; right: 30px; top: 20px; }
+.layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+
+/* 체험 소개 카드 */
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
+.twin .card { display: flex; flex-direction: column; gap: 14px; padding: 30px; }
+.twin .card h3 { font-size: 34px; margin: 0; }
+.twin .card p { font-size: 26px; color: var(--ink); }
+.twin .card .n { font-size: 20px; font-weight: 800; color: #b46e00; }
+.twin .card img { width: 100%; height: 400px; object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); }
+
+/* 30% 카드, 흐름 그림 */
+.stat30 { background: #1f1d2b; color: #fff; border-radius: 22px; padding: 26px 28px; display: flex; align-items: center; gap: 22px; }
+.stat30 .big { color: #ffd27a; }
+.stat30 p { margin: 0; font-size: 23px; line-height: 1.45; }
+.flow { display: grid; gap: 16px; }
+.flow .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 26px; }
+.flow .row b { width: 210px; color: var(--muted); font-size: 22px; }
+.flow .row span { padding: 10px 18px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); font-weight: 700; }
+.flow .row.new span { background: var(--hub-soft); border-color: #d6d2ff; color: var(--hub); }
+.flow .row i { font-style: normal; color: var(--faint); }
+
+.wait { flex: 1; display: flex; align-items: center; justify-content: center; }
+.wait .card { max-width: 900px; text-align: center; padding: 50px; }
+.wait .card p { font-size: 26px; }
+
+/* 위쪽에 주소 띠가 있는 장은 캡처 높이를 줄인다 */
+.url.top + .demo .pic .shot { max-height: 560px; }
