@@ -107,6 +107,10 @@
     }
     return h + '</div>' + legendOf(lv, '1~10월 합계 커밋 수');
   };
+  // 질문 4: 한 장에 도구 둘. 카드마다 캡처 · 이름 · 항목 · 버튼(gos는 go() 이어 붙인 것)
+  var card = function (name, f, items, gos) {
+    return '<div class="pc"><div class="pic">' + shot(f) + '</div><h3>' + name + '</h3>' + pts(items) + '<div class="gos">' + gos + '</div></div>';
+  };
   var demo = function (side, pic) { return '<div class="demo"><div class="side">' + side + '</div><div class="pic">' + pic + '</div></div>'; };
 
   window.SLIDES = [
@@ -218,6 +222,35 @@
          shot('13-문항나눔-첫화면.png')),
     notes: '학교마다 시험 문항을 만들지만 학교 밖으로 모이지 않았습니다. 정보과 교사끼리 문항을 성취기준별로 모아 보고 토의하려고 만든 도구입니다.\n진행자 계정으로 로그인해 짧게 시연하겠습니다.\n성취기준 123개, 대상 과목 여섯 가지입니다. 원본 pdf는 관리자가 승인하면 삭제됩니다.' },
 
+  // 질문 4 답 둘: 도구 둘씩 한 장에. 캡처(2026-10-28): 로드맵은 컴포넌트만 예시 진행 상태로 그린 것, VPyLab 갤럭시 디스코 실행 화면,
+  // Neural Explorer A5(인공 뉴런 하나, 역전파 3 step), 데이터 과학 5차시 예시 앱(나이스 급식 API로 그날 당곡고 중식을 실시간 조회)
+  { sec: '바이브 코딩 프로젝트', title: '질문 4) 답 하나, pythink2 · VPyLab', html:
+    qttl('4', 'AI시대에 더 필요해진 능력', '1', 'pythink2 · VPyLab', '', 2) +
+    '<div class="pair">' +
+      card('pythink2', '21-pythink2-로드맵.webp',
+        '여덟 개 월드 로드맵으로 출력부터 반복까지 단계 따라가기 | AI 코치 힌트로 답 대신 생각 유도하기',
+        go('https://pythink2.vercel.app', 'pythink2 열기')) +
+      card('VPyLab', '22-vpylab-갤럭시디스코.webp',
+        '파이썬 코드를 3D 장면과 소리로 바꿔 갤러리에서 공유하기 | 수학·과학·미술 융합 코스 따라가기',
+        go('https://vpylab.vercel.app/sandbox?example=lightshow-galaxy-disco', '갤럭시 디스코 실행') +
+        go('https://vpylab.vercel.app', 'VPyLab 열기', true)) +
+    '</div>',
+    notes: '두 도구 모두 학생이 코드를 직접 쓰며 생각하는 도구입니다. pythink2는 여덟 개 월드 로드맵과 AI 코치 힌트로 학습 순서를 잡아 줍니다. VPyLab은 갤럭시 디스코 예제를 바로 실행해 보여 드리겠습니다.' },
+
+  { sec: '바이브 코딩 프로젝트', title: '질문 4) 답 둘, Neural Explorer · 당곡고 데이터 과학', html:
+    qttl('4', 'AI시대에 더 필요해진 능력', '2', 'Neural Explorer · 당곡고 데이터 과학', '', 2) +
+    '<div class="pair">' +
+      card('Neural Explorer', '23-neural-explorer-역전파.webp',
+        '코드 없이 슬라이더와 그림판으로 신경망부터 LLM 첫걸음까지 다루기 | 인공 뉴런 하나의 학습 반복과 역전파 살펴보기',
+        go('https://neural-explorer.vercel.app/#/a5', '역전파 시연') +
+        go('https://neural-explorer.vercel.app', 'Neural Explorer 열기', true)) +
+      card('당곡고 데이터 과학', '24-데이터과학-급식실시간.webp',
+        '기온·영화·급식·스포츠 데이터로 공통 15차시 수업 진행하기 | 나이스 급식 API로 실시간 급식 불러오며 학생이 AI와 대화해 앱 만들기',
+        go('https://greatsong.github.io/ds-danggok-2026/', '데이터 과학 교재 열기') +
+        go('https://greatsong.github.io/ds-danggok-2026/lesson05.html', '5차시 급식 API', true)) +
+    '</div>',
+    notes: 'Neural Explorer로 인공 뉴런 하나가 역전파로 학습하는 과정을 단계별로 시연해 보여 드리겠습니다.\n데이터 과학 수업은 웹교재이며 5차시에 학생이 AI와 대화하며 급식 앱을 만듭니다. 나이스 급식 API로 오늘 중식 메뉴를 실시간으로 불러옵니다.' },
+
   { sec: '바이브 코딩 프로젝트', title: '질문 4) 직접 해 보는 두 가지', html:
     qttl('4', '', '', 'AI시대에 더 필요해진 능력') +
     '<div class="twin">' +
@@ -263,15 +296,7 @@
     notes: '기존 프로그래밍 교육은 문법에서 시작하지만 이 수업은 결과물에서 시작합니다. AI가 중간 다리가 되어 가능해진 설계입니다.\n3월 실제 수업에 학생 54명이 참여했고 만족도 96%였습니다.' },
 
   // ── 마무리 ───────────────────────────────────────────
-  { sec: '마무리', title: '오늘 저녁 (선택)', html:
-    ttl('오늘 저녁', '선택') +
-    '<div class="url top"><div class="lab">연수 메인 → 웹앱 갤러리</div><div class="u sm">' + HUB + '</div></div>' +
-    demo(pts('학교에서 풀고 싶은 문제 한 줄 올리기 | 다른 선생님 글에 좋아요와 댓글 남기기') +
-         '<div class="gos">' + go('../gallery/#submit', '갤러리에 올리기') + '</div>',
-         shot('12-갤러리.png')),
-    notes: '오늘 체험과 사례를 보며 떠오른 학교의 문제를 갤러리에 남겨 주십시오. 선택 사항입니다.\n둘째 날 활동은 내일 안내하겠습니다. 감사합니다.' },
-
-  // 마지막: 연수 주소. 화면을 누르면(1단계) 주소 상자 자리에서 실제 연수 메인이 펼쳐져 직접 시연한다
+  // 연수 주소. 화면을 누르면(1단계) 주소 상자 자리에서 실제 연수 메인이 펼쳐져 직접 시연한다
   { sec: '마무리', title: '연수 메인 접속', steps: 1, html:
     ttl('연수 메인 접속') +
     '<div class="url"><div class="lab">노트북 주소창에 입력</div><div class="u">' + HUB + '</div></div>' +
@@ -282,5 +307,14 @@
     live('../', '연수 메인', '.url'),
     onStep: liveStep,
     notes: '지금 노트북에서 이 주소를 입력해 주십시오.\n오늘 들어가는 곳은 모두 이 페이지의 링크로 연결됩니다. 열어 둔 채로 진행하겠습니다.' },
+
+  // 마지막: 오늘 저녁 갤러리 올리기(과제, 선택)
+  { sec: '마무리', title: '오늘 저녁 (선택)', html:
+    ttl('오늘 저녁', '선택') +
+    '<div class="url top"><div class="lab">연수 메인 → 웹앱 갤러리</div><div class="u sm">' + HUB + '</div></div>' +
+    demo(pts('학교에서 풀고 싶은 문제 한 줄 올리기 | 다른 선생님 글에 좋아요와 댓글 남기기') +
+         '<div class="gos">' + go('../gallery/#submit', '갤러리에 올리기') + '</div>',
+         shot('12-갤러리.png')),
+    notes: '오늘 체험과 사례를 보며 떠오른 학교의 문제를 갤러리에 남겨 주십시오. 선택 사항입니다.\n둘째 날 활동은 내일 안내하겠습니다. 감사합니다.' },
   ];
 })();
