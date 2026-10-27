@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹앱 갤러리 · AI 디지털 선도교사 연수</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <span class="brand"><span class="logo">🚀</span>바이브코딩 해커톤 <span class="a">웹앱 갤러리</span></span>
+    <span class="spacer"></span>
+    <a class="home" href="../">← 연수 자료</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="mainTabs">
+    <button class="tab active" data-view="gallery" type="button">🖼️ 갤러리</button>
+    <button class="tab" data-view="submit" type="button">📮 올리기</button>
+  </nav>
+
+  <main>
+
+    <!-- ============ 갤러리 화면 ============ -->
+    <section id="view-gallery" class="view active">
+      <div class="eyebrow">GALLERY</div>
+      <h1>선생님들의 <span class="a">웹앱과 풀고 싶은 문제</span></h1>
+      <div class="under"></div>
+      <p class="lead">선생님들이 만든 웹앱과 학교에서 풀고 싶은 문제를 모았습니다. 좋아요와 댓글로 반응을 남깁니다.</p>
+
+      <details class="howto">
+        <summary>❓ 처음이라면 사용법 안내</summary>
+        <ol>
+          <li><b>둘러보기:</b> 만든 앱 카드의 <b>앱 열기</b>를 누르면 앱이 새 창에서 열립니다. <b>깃허브</b> 버튼이 있으면 코드도 볼 수 있습니다.</li>
+          <li><b>좋아요:</b> <b><svg class="like-icon inline filled" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></b> 버튼을 누르면 좋아요가 올라가고, 한 번 더 누르면 취소됩니다. 풀고 싶은 문제 카드의 좋아요는 "저도 이 문제를 풀고 싶습니다"라는 뜻입니다.</li>
+          <li><b>댓글과 답글:</b> 카드 아래 <b>댓글</b>을 펼쳐 표시 이름과 내용을 적고 <b>남기기</b>를 누릅니다. 다른 댓글에 이어서 말하려면 그 댓글 아래 <b>답글</b>을 누릅니다.</li>
+          <li><b>올리기:</b> 위 <b>📮 올리기</b> 탭에서 만든 앱이나 풀고 싶은 문제를 올립니다. 문제로 올린 글은 앱을 만든 뒤 <b>고치기</b>에서 만든 앱으로 바꿀 수 있고, 좋아요와 댓글은 그대로 남습니다.</li>
+          <li><b>고치기와 지우기:</b> 내가 올린 글과 댓글은 올릴 때 사용한 브라우저에서만 고치거나 지울 수 있습니다.</li>
+        </ol>
+        <p class="howto-tip">부적절한 글이나 댓글에는 <b>신고</b>를 누릅니다. 신고가 3건 모이면 갤러리에서 숨겨지고 진행자가 확인합니다.</p>
+      </details>
+
+      <div class="filter-row">
+        <div class="chip-group" id="kindFilter" role="group" aria-label="종류로 골라 보기">
+          <button class="chip-btn active" data-kind="all" type="button">전체</button>
+          <button class="chip-btn" data-kind="app" type="button">만든 앱</button>
+          <button class="chip-btn" data-kind="problem" type="button">풀고 싶은 문제</button>
+        </div>
+        <div class="chip-group" id="sortBy" role="group" aria-label="정렬">
+          <button class="chip-btn ghost active" data-sort="new" type="button">최신순</button>
+          <button class="chip-btn ghost" data-sort="likes" type="button">좋아요순</button>
+        </div>
+      </div>
+
+      <p id="galleryNotice" class="notice-msg" role="status" hidden></p>
+      <p id="galleryCount" class="count-line"></p>
+      <div id="galleryGrid" class="grid"></div>
+      <p id="galleryEmpty" class="empty-msg" hidden>아직 올라온 글이 없습니다.<br><button type="button" class="btn-primary empty-cta" data-go-submit>📮 가장 먼저 올리기</button></p>
+    </section>
+
+    <!-- ============ 올리기 화면 ============ -->
+    <section id="view-submit" class="view">
+      <div class="eyebrow" id="submitEyebrow">SUBMIT</div>
+      <h1 id="submitTitle">웹앱이나 <span class="a">풀고 싶은 문제 올리기</span></h1>
+      <div class="under"></div>
+      <p class="lead">올린 내용은 이 갤러리 주소를 아는 사람 누구에게나 공개됩니다.</p>
+
+      <form id="submitForm" class="form-card" novalidate>
+        <fieldset class="field kind-field">
+          <legend>올릴 종류 *</legend>
+          <div class="kind-options">
+            <label class="kind-option">
+              <input type="radio" name="kind" value="app" checked>
+              <span class="kind-name">만든 앱</span>
+              <span class="kind-desc">이미 만들어 배포한 웹앱</span>
+            </label>
+            <label class="kind-option">
+              <input type="radio" name="kind" value="problem">
+              <span class="kind-name">풀고 싶은 문제</span>
+              <span class="kind-desc">아직 만들지 않았지만 해결하고 싶은 학교 현장의 문제</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="f-author">표시 이름 * <span class="hint">(실명이 아니어도 됩니다)</span></label>
+          <input id="f-author" type="text" maxlength="20" placeholder="예: 별사탕 선생님" autocomplete="off" required>
+        </div>
+
+        <div class="field">
+          <label for="f-title" id="f-title-label">앱 이름 *</label>
+          <input id="f-title" type="text" maxlength="40" placeholder="예: 수행평가 제출 확인판" autocomplete="off" required>
+        </div>
+
+        <div class="field app-only">
+          <label for="f-app-url">앱 주소 * <span class="hint">(https://로 시작)</span></label>
+          <input id="f-app-url" type="url" inputmode="url" maxlength="300" placeholder="https://아이디.github.io/앱이름/" autocomplete="off">
+        </div>
+
+        <div class="field app-only">
+          <label for="f-repo-url">깃허브 저장소 주소 <span class="hint">(선택)</span></label>
+          <input id="f-repo-url" type="url" inputmode="url" maxlength="300" placeholder="https://github.com/아이디/저장소" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="f-problem" id="f-problem-label">이 앱으로 해결하려던 문제 *</label>
+          <textarea id="f-problem" rows="5" maxlength="400" placeholder="누가, 어떤 장면에서, 무엇이 불편했는지 적습니다." required></textarea>
+          <span class="counter" id="f-problem-count">0 / 400</span>
+        </div>
+
+        <p class="privacy-note">학교명, 연락처, 학생 이름 같은 개인정보는 적지 않습니다.</p>
+
+        <div id="formMsg" class="form-msg" role="alert" hidden></div>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary" id="submitBtn">갤러리에 올리기</button>
+          <button type="button" class="btn-ghost" id="cancelEditBtn" hidden>고치기 취소</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    2026 고등학교 AI 디지털 선도교사 연수 · 바이브코딩 사례 나눔과 아이데이션 해커톤
+  </footer>
+</div>
+
+<template id="cardTemplate">
+  <article class="card">
+    <div class="card-top">
+      <span class="badge kind-badge"></span>
+      <span class="card-author"></span>
+    </div>
+    <h3 class="card-title"></h3>
+    <div class="card-body">
+      <p class="card-label"></p>
+      <p class="card-problem"></p>
+      <button type="button" class="btn-more" hidden>더 보기</button>
+    </div>
+    <div class="card-links">
+      <a class="btn-go" target="_blank" rel="noopener noreferrer">앱 열기 ↗</a>
+      <a class="btn-repo" target="_blank" rel="noopener noreferrer">깃허브</a>
+    </div>
+    <p class="card-host"></p>
+    <div class="card-actions">
+      <button type="button" class="btn-like" aria-pressed="false">
+        <svg class="like-icon" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> <span class="like-count">0</span>
+      </button>
+      <span class="spacer"></span>
+      <button type="button" class="btn-text btn-edit" hidden>고치기</button>
+      <button type="button" class="btn-text btn-delete" hidden>지우기</button>
+      <button type="button" class="btn-text btn-report" hidden>신고</button>
+    </div>
+    <p class="card-msg" role="status" hidden></p>
+    <details class="comment-block">
+      <summary>댓글 <span class="cm-count">0</span></summary>
+      <ul class="cm-list"></ul>
+      <form class="cm-form cm-main">
+        <input type="text" class="cm-name" maxlength="20" placeholder="표시 이름" aria-label="표시 이름" autocomplete="off">
+        <input type="text" class="cm-content" maxlength="200" placeholder="새 댓글 내용" aria-label="새 댓글 내용" autocomplete="off">
+        <button type="submit" class="btn-small">남기기</button>
+      </form>
+      <p class="cm-msg" hidden></p>
+    </details>
+  </article>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
