@@ -55,7 +55,9 @@
 .twin { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex: 1; min-height: 0; }
 .twin .card { display: flex; flex-direction: column; gap: 14px; padding: 30px; }
 .twin .card h3 { font-size: 34px; margin: 0; }
-.twin .card p { font-size: 26px; color: var(--ink); min-height: 3em; }   /* 두 줄 설명까지 같은 높이: 두 카드의 그림 위치를 맞춘다 */
+.twin .card p { font-size: 26px; color: var(--ink); }
+.twin .card .pts { min-height: 2.9em; }   /* 두 줄 설명까지 같은 높이: 두 카드의 그림 위치를 맞춘다 */
+.twin .card .pts li { font-size: 26px; }
 .twin .card .n { font-size: 20px; font-weight: 800; color: #b46e00; }
 .twin .card img { width: 100%; height: 360px; object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); }
 
