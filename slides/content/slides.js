@@ -38,6 +38,7 @@
 
   // ── 소개 ─────────────────────────────────────────────
   // 세종과학고 특강(260923) 자기소개 2~4장 원본 그대로(neural-explorer/public/lecture-assets/source/slide-02~04.png)
+  // intro-02만 고침(2026-10-27): 서울대 사범대학 강사 2020 – 2026.8, '2020 – 2022 재단법인 카카오임팩트 이사' 줄 추가(줄 간격을 조금 좁혀 맞춤)
   { sec: '소개', title: '제 소개 1', html: '<div class="full"><img alt="" src="img/intro-02.png"></div>', notes: '' },
   { sec: '소개', title: '제 소개 2', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
   { sec: '소개', title: '제 소개 3', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
