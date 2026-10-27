@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브코딩 해커톤 · AI 디지털 선도교사 연수</title>
+<meta name="description" content="2026 고등학교 AI 디지털 선도교사 연수 · 바이브코딩 사례 나눔과 아이데이션 해커톤 연수 자료 모음">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<!--
+  연수 메인 허브. 이틀 동안 쓰는 자료를 한 주소에 모은다.
+  색과 글꼴은 웹앱 갤러리(gallery/style.css), 연수 슬라이드와 같은 계열이다.
+  개요 문장은 슬라이드 구성안 0절의 솔라 프로4 집필본을 그대로 옮겼다(2026-10-27).
+-->
+<style>
+  :root {
+    --ink: #1f1d2b;
+    --muted: #6b6880;
+    --faint: #9a97ad;
+    --line: #e7e4ef;
+    --paper: #ffffff;
+    --soft: #f7f6fb;
+    --bg: #f4f3f9;
+    --primary: #5546e8;
+    --primary-dark: #4336c9;
+    --primary-soft: #eeecff;
+    --problem: #e08a00;
+    --problem-dark: #b46e00;
+    --problem-soft: #fff4e0;
+    --radius: 0.9rem;
+    --radius-sm: 0.7rem;
+    --shadow: 0 1px 4px rgba(31, 29, 43, 0.06);
+    --shadow-lg: 0 8px 24px rgba(31, 29, 43, 0.1);
+    --maxw: 1080px;
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--ink); background: var(--bg);
+    line-height: 1.7; font-size: 16px; -webkit-font-smoothing: antialiased;
+    word-break: keep-all; overflow-wrap: anywhere;
+  }
+
+  /* 상단 바 */
+  .topbar {
+    position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(8px); border-bottom: 1px solid var(--line);
+  }
+  .topbar .inner { max-width: var(--maxw); margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+  .brand { font-weight: 800; letter-spacing: -0.02em; display: flex; align-items: center; gap: 7px; color: var(--ink); text-decoration: none; }
+  .brand .a { color: var(--primary); }
+  .spacer { flex: 1; }
+  .top-link { text-decoration: none; color: var(--muted); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+  .top-link:hover { color: var(--ink); }
+
+  /* 본문 */
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 26px 16px 80px; }
+  main {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 34px clamp(16px, 5vw, 46px) 40px; box-shadow: var(--shadow);
+  }
+  .eyebrow { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; color: var(--primary); }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; margin: 0.3rem 0 0; line-height: 1.3; }
+  h1 .a { color: var(--primary); }
+  .under { width: 56px; height: 4px; border-radius: 999px; background: linear-gradient(90deg, var(--primary), var(--problem)); margin: 0.7rem 0 1rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .meta li { font-size: 0.82rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); color: var(--muted); }
+  .principle {
+    margin: 0 0 0.4rem; padding: 14px 18px; border-radius: var(--radius-sm);
+    background: var(--primary-soft); color: var(--primary-dark); font-weight: 700; font-size: 1rem;
+  }
+  h2 { font-size: 1.15rem; font-weight: 800; margin: 2.2rem 0 0.8rem; letter-spacing: -0.01em; }
+
+  /* 이틀의 흐름 */
+  .days { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .day { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 18px; background: var(--paper); border-top: 4px solid var(--primary); }
+  .day.d2 { border-top-color: var(--problem); }
+  .day .n { font-size: 0.78rem; font-weight: 800; color: var(--primary); }
+  .day.d2 .n { color: var(--problem-dark); }
+  .day .tt { font-size: 1.08rem; font-weight: 800; margin: 2px 0 4px; }
+  .day p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+  /* 자료 카드 */
+  .linkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+  .linkcard {
+    display: flex; flex-direction: column; gap: 3px; text-decoration: none; color: var(--ink);
+    border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 18px; background: var(--paper);
+    box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  a.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+  .linkcard .n { font-size: 0.78rem; font-weight: 800; color: var(--primary); }
+  .linkcard .tt { font-size: 1.08rem; font-weight: 800; }
+  .linkcard .d { font-size: 0.88rem; color: var(--muted); }
+  .linkcard.is-soon { background: var(--soft); box-shadow: none; color: var(--faint); }
+  .linkcard.is-soon .n { color: var(--faint); }
+  .soon { align-self: flex-start; margin-top: 6px; font-size: 0.72rem; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); }
+
+  /* QR */
+  .qrs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .qr { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px; text-align: center; background: var(--paper); }
+  .qr img { width: 100%; max-width: 200px; aspect-ratio: 1; display: block; margin: 0 auto 8px; }
+  .qr .tt { font-weight: 800; }
+  .qr .u { font-size: 0.74rem; color: var(--faint); }
+  .qr .u span { white-space: nowrap; } /* 주소는 빗금 뒤(<wbr>)에서만 줄을 바꾼다 */
+
+  .presenter { margin-top: 2.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--muted); }
+  .presenter b { color: var(--ink); }
+  footer { max-width: var(--maxw); margin: 0 auto; padding: 14px 20px 40px; color: var(--muted); font-size: 0.82rem; text-align: center; }
+
+  @media (max-width: 640px) {
+    main { padding: 24px 16px 30px; }
+    .days { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .topbar .inner { padding: 10px 12px; gap: 8px; }
+    .brand { font-size: 0.95rem; }
+    .wrap { padding: 18px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="./"><span>🚀</span>바이브코딩 <span class="a">해커톤</span></a>
+    <span class="spacer"></span>
+    <a class="top-link" href="gallery/">🖼️ 웹앱 갤러리</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <main>
+    <div class="eyebrow">2026 고등학교 AI 디지털 선도교사 연수</div>
+    <h1>바이브코딩 사례 나눔과 <span class="a">아이데이션 해커톤</span></h1>
+    <div class="under"></div>
+    <ul class="meta">
+      <li>고등학교 AI 디지털 선도교사</li>
+      <li>이틀 연속 · 하루 90분</li>
+    </ul>
+    <p class="principle">중심 원칙은 만들기 전에 그 문제가 누군가의 진짜 문제인지 확인하는 것입니다.</p>
+
+    <h2>🧭 이틀의 흐름</h2>
+    <div class="days">
+      <div class="day">
+        <div class="n">1일차 · 90분</div>
+        <div class="tt">사례에서 문제로</div>
+        <p>첫날은 도구 제작 사례와 참가자 사례 나눔에서 학교 현장의 문제를 찾고 팀을 꾸립니다.</p>
+      </div>
+      <div class="day d2">
+        <div class="n">2일차 · 90분</div>
+        <div class="tt">문제에서 시제품으로</div>
+        <p>둘째 날은 팀별로 문제를 가설로 정의하고 종이 프로토타입을 시연 영상으로 발표합니다.</p>
+      </div>
+    </div>
+
+    <h2>📂 연수 자료</h2>
+    <div class="linkgrid">
+      <!-- 발표 슬라이드 자리: 덱 파일이 생기면 아래 div를 <a class="linkcard" href="덱 경로"> 로 바꾸고 '준비 중' 표시를 지운다 -->
+      <div class="linkcard is-soon" id="slides-card" aria-disabled="true">
+        <div class="n">발표</div>
+        <div class="tt">🎞️ 발표 슬라이드</div>
+        <div class="d">1일차와 2일차 발표 슬라이드</div>
+        <span class="soon">준비 중</span>
+      </div>
+      <a class="linkcard" href="gallery/">
+        <div class="n">갤러리</div>
+        <div class="tt">🖼️ 웹앱 갤러리</div>
+        <div class="d">선생님들이 만든 웹앱과 학교에서 풀고 싶은 문제를 모았습니다. 좋아요와 댓글로 반응을 남깁니다.</div>
+      </a>
+      <a class="linkcard" href="gallery/#submit">
+        <div class="n">갤러리</div>
+        <div class="tt">📮 갤러리에 올리기</div>
+        <div class="d">만든 앱이나 풀고 싶은 문제를 올립니다.</div>
+      </a>
+    </div>
+
+    <h2>📱 휴대폰으로 열기</h2>
+    <div class="qrs">
+      <div class="qr">
+        <img src="assets/qr/hub.svg" alt="연수 메인 페이지 주소 QR 코드">
+        <div class="tt">연수 메인</div>
+        <div class="u"><span>greatsong.github.io/</span><wbr><span>2026-ai-leader-training</span></div>
+      </div>
+      <div class="qr">
+        <img src="assets/qr/submit.svg" alt="웹앱 갤러리 올리기 화면 주소 QR 코드">
+        <div class="tt">갤러리에 올리기</div>
+        <div class="u"><span>…/2026-ai-leader-training/</span><wbr><span>gallery/#submit</span></div>
+      </div>
+    </div>
+
+    <p class="presenter">진행 <b>송석리</b> · 당곡고등학교 정보 교사</p>
+  </main>
+</div>
+
+<footer>2026 고등학교 AI 디지털 선도교사 연수 · 바이브코딩 사례 나눔과 아이데이션 해커톤</footer>
+
+</body>
+</html>
