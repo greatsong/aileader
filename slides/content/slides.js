@@ -35,6 +35,10 @@
     if (o) { box.style.setProperty('--cx', (x + o.offsetWidth / 2) + 'px'); box.style.setProperty('--cy', (y + o.offsetHeight / 2) + 'px'); }
     box.classList.toggle('on', step >= 1);
   };
+  var bwLoad = function () {   // 3D 장면은 WebGL이 무거워 앞 장에 들어올 때 한 번만 불러 둔다(장을 떠나 있으면 그리지 않는다)
+    var f = document.querySelector('.bw iframe');
+    if (f && !f.getAttribute('src')) f.src = 'bitworld.html?embed=1';
+  };
   // 커밋 히트맵(content/commits.js, slides/_src/build_commits.py가 만든다). 칸 색은 커밋이 있는 칸들의 4분위로 5단계
   var CM = window.COMMITS || { days: {}, wh: [], from: '2026-01-01', to: '2026-01-01' };
   var leveler = function (vals) {
@@ -132,6 +136,26 @@
   { sec: '소개', title: '제 소개 1', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-02.png"></div>', notes: '' },
   { sec: '소개', title: '제 소개 2', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
   { sec: '소개', title: '제 소개 3', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
+
+  // 아톰의 세상과 비트의 세상: 초안(1e7e700)의 차이나는 클라스 장면 세 장(source-06·07·09)을 화면 가득 겹쳐 차례로. 앞 장 위에 다음 장이 덮인다
+  { sec: '소개', title: '아톰의 세상과 비트의 세상', fx: 'fade', html:
+    '<div class="bleed paper">' +
+      '<div class="layer"><img alt="" src="img/atom-bit-1.webp"></div>' +
+      '<div class="layer" data-s="1"><img alt="" src="img/atom-bit-2.webp"></div>' +
+      '<div class="layer" data-s="2"><img alt="" src="img/atom-bit-3.webp"></div>' +
+    '</div>',
+    onStep: function () { bwLoad(); },   // 다음 장(3D)을 미리 불러 둔다
+    notes: '닐 거센필드는 세상을 아톰의 세상과 비트의 세상으로 구분했습니다. 아톰은 물질이고 비트는 정보입니다.\n교사가 만드는 도구는 비트의 세상에 있습니다. 풀려는 문제는 교실이라는 아톰의 세상에 있습니다.' },
+
+  // 넓어지는 비트의 세상: 10/26 워크숍 인트로 3D(bitworld.html)를 통째로 끼운다. 덱의 단계 0~8이 장면의 단계
+  { sec: '소개', title: '넓어지는 비트의 세상', steps: 8, html:
+    '<div class="bw"><iframe title="아톰의 세상과 비트의 세상 3D 장면"></iframe></div>',
+    onStep: function (el, step) {
+      el.dataset.k = step; bwLoad();
+      var w = el.querySelector('iframe').contentWindow;
+      if (w && w.BW) w.BW.go(step);
+    },
+    notes: '' },
 
   // ── 네 질문 ──────────────────────────────────────────
   // 올해 커밋: 월일별, 요일별·시간대별(진행자 맥북의 로컬 저장소 기준)

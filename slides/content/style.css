@@ -182,6 +182,15 @@
 .bleed img { width: 100%; height: 100%; object-fit: cover; display: block; }
 #stage:has(.slide.cur .bleed) #bar, #stage:has(.slide.cur .bleed) #foot { visibility: hidden; }
 .slide.cur .bleed img { animation: settle 1.8s cubic-bezier(.16, .84, .3, 1) backwards; }
+.bleed.paper { background: #fff; }
+/* 겹친 그림: 다음 장이 앞 장 위로 천천히 덮인다(밀려 올라오지 않게) */
+.slide.anim .bleed .layer[data-s] { transition: opacity .8s ease; }
+.bleed .layer[data-s].off { transform: none; }
+
+/* 3D 장면을 끼운 장(bitworld.html). 머리·바닥 띠는 숨긴다 */
+.bw { position: absolute; inset: 0; z-index: 30; background: #0A0A0B; }
+.bw iframe { width: 100%; height: 100%; border: 0; display: block; }
+#stage:has(.slide.cur .bw) #bar, #stage:has(.slide.cur .bw) #foot { visibility: hidden; }
 
 /* ── 구술 평가 with 팅커비스 ── */
 .ttl.q h2 .with { font-weight: 700; color: #1aa59a; letter-spacing: -.02em; margin-left: 4px; }
