@@ -35,6 +35,45 @@
     if (o) { box.style.setProperty('--cx', (x + o.offsetWidth / 2) + 'px'); box.style.setProperty('--cy', (y + o.offsetHeight / 2) + 'px'); }
     box.classList.toggle('on', step >= 1);
   };
+  // 커밋 히트맵(content/commits.js, slides/_src/build_commits.py가 만든다). 칸 색은 커밋이 있는 칸들의 4분위로 5단계
+  var CM = window.COMMITS || { days: {}, wh: [], from: '2026-01-01', to: '2026-01-01' };
+  var leveler = function (vals) {
+    var nz = vals.filter(function (v) { return v > 0; }).sort(function (a, b) { return a - b; });
+    var q = function (p) { return nz.length ? nz[Math.min(nz.length - 1, Math.floor(p * (nz.length - 1)))] : 0; };
+    var t = [q(.25), q(.5), q(.75)];
+    return function (v) { return v <= 0 ? 0 : v <= t[0] ? 1 : v <= t[1] ? 2 : v <= t[2] ? 3 : 4; };
+  };
+  var heatDays = function () {
+    var end = new Date(CM.to + 'T00:00:00'), m1 = end.getMonth() + 1, vals = [], k, d, m;
+    for (k in CM.days) vals.push(CM.days[k]);
+    var lv = leveler(vals), h = '<div class="hm md"><span></span>';
+    for (d = 1; d <= 31; d++) h += '<b>' + d + '</b>';
+    for (m = 1; m <= m1; m++) {
+      h += '<em>' + m + '월</em>';
+      for (d = 1; d <= 31; d++) {
+        var dt = new Date(2026, m - 1, d), key = '2026-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+        if (dt.getMonth() !== m - 1 || dt > end) { h += '<i class="x"></i>'; continue; }
+        var v = CM.days[key] || 0;
+        h += '<i class="l' + lv(v) + '" style="--d:' + ((m - 1) * 40 + d * 14) + 'ms" title="' + m + '월 ' + d + '일 · ' + v + '개"></i>';
+      }
+    }
+    return h + '</div>';
+  };
+  var heatWeek = function () {
+    var names = ['월', '화', '수', '목', '금', '토', '일'], vals = [], w, hr;
+    (CM.wh || []).forEach(function (r) { vals = vals.concat(r); });
+    var lv = leveler(vals), h = '<div class="hm wh"><span></span>';
+    for (hr = 0; hr < 24; hr++) h += '<b>' + hr + '</b>';
+    for (w = 0; w < 7; w++) {
+      h += '<em>' + names[w] + '</em>';
+      for (hr = 0; hr < 24; hr++) {
+        var v = (CM.wh[w] || [])[hr] || 0;
+        h += '<i class="l' + lv(v) + '" style="--d:' + (w * 60 + hr * 22) + 'ms" title="' + names[w] + '요일 ' + hr + '시 · ' + v + '개"></i>';
+      }
+    }
+    return h + '</div>';
+  };
+  var legend = '<div class="hm-leg">적음<i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>많음</div>';
   var demo = function (side, pic) { return '<div class="demo"><div class="side">' + side + '</div><div class="pic">' + pic + '</div></div>'; };
 
   window.SLIDES = [
@@ -66,6 +105,12 @@
   { sec: '소개', title: '제 소개 3', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
 
   // ── 네 질문 ──────────────────────────────────────────
+  // 올해 커밋: 월일별, 요일별·시간대별(진행자 맥북의 로컬 저장소 기준)
+  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 월일별', html: function () {
+    return ttl('2026년 커밋 히트맵', '월일별') + heatDays() + legend; }, notes: '' },
+  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 요일별·시간대별', html: function () {
+    return ttl('2026년 커밋 히트맵', '요일별·시간대별') + heatWeek() + legend; }, notes: '' },
+
   { sec: '바이브 코딩 프로젝트', title: '제가 해 온 네 가지 질문', steps: 4, html:
     ttl('제가 해 온 네 가지 질문') +
     '<ol class="qs">' +
@@ -98,16 +143,9 @@
 
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 하나, 구술 평가 with 팅커비스', html:
     qttl('3', '수집되지 못한 데이터', '1', '구술 평가 <span class="with">with 팅커비스</span>', '', 3) +
-    // 흐름: 구술 평가 음성 + 깃허브 기록 ⇒ 교사 + AI ⇒ 피드백 (글자만, 장에 들어오면 왼쪽부터 차례로 이어진다)
-    '<div class="oflow">' +
-      '<div class="ins"><div class="oc">구술 평가 음성</div><div class="plus">+</div>' +
-        '<div class="oc">깃허브 기록<small>코드, 데이터, 문제해결과정</small></div></div>' +
-      '<div class="arr a1"><i></i></div>' +
-      '<div class="oc mid">교사 <span>+</span> AI</div>' +
-      '<div class="arr a2"><i></i></div>' +
-      '<div class="oc out">피드백</div>' +
-    '</div>' +
-    '<div class="gos oflow-go">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',   // 앱 시연은 진행자가 따로 연 브라우저에서
+    demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
+         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',   // 앱 시연은 진행자가 따로 연 브라우저에서
+         shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 둘, AI 면접 앱', html:
