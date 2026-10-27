@@ -36,6 +36,12 @@
          shot('01-학교지도-연수판.png')),
     notes: '학교를 올리면 앞 화면 지도에 바로 표시됩니다. 궁금한 것을 적어 주시면 오늘 이야기에 반영하겠습니다.\n올라오는 동안 지도를 함께 보며 어느 지역에서 오셨는지 짚어 보겠습니다. 활동 시간은 5분입니다.' },
 
+  // ── 소개 ─────────────────────────────────────────────
+  // 세종과학고 특강(260923) 자기소개 2~4장 원본 그대로(neural-explorer/public/lecture-assets/source/slide-02~04.png)
+  { sec: '소개', title: '제 소개 1', html: '<div class="full"><img alt="" src="img/intro-02.png"></div>', notes: '' },
+  { sec: '소개', title: '제 소개 2', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
+  { sec: '소개', title: '제 소개 3', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
+
   // ── 네 질문 ──────────────────────────────────────────
   { sec: '네 질문', title: '제가 해 온 네 가지 질문', steps: 4, html:
     ttl('제가 해 온 네 가지 질문') +
