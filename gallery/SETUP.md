@@ -4,6 +4,10 @@
 2026 고등학교 AI 디지털 선도교사 연수(바이브코딩 사례 나눔과 아이데이션 해커톤) 전용이며,
 vibe1 작품 갤러리(`2026-vibe1/gallery/`)를 바탕으로 만들었습니다.
 
+- 배포 주소: https://greatsong.github.io/2026-ai-leader-training/gallery/
+- 올리기 화면 바로 열기(슬라이드 QR용): https://greatsong.github.io/2026-ai-leader-training/gallery/#submit
+- 저장소: https://github.com/greatsong/2026-ai-leader-training (GitHub Pages, `main` 가지 루트)
+
 ## 1. vibe1 갤러리와 다른 점
 
 | 항목 | vibe1 갤러리 | 이 갤러리 |
