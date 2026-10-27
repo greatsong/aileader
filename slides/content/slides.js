@@ -226,7 +226,7 @@
   // Neural Explorer A5(인공 뉴런 하나, 역전파 3 step), 데이터 과학 10차시 연관 분석 막대 위젯(규칙 B 순대국 → 석박지).
   // 항목·노트는 솔라 프로4 집필(_src/solar_day1_q4_fix1.md, 데이터 과학 항목 solar_q4_fix5.md, 둘째 장 노트 solar_day1_q4_fix4.md)
   { sec: '바이브 코딩 프로젝트', title: '질문 4) 답 하나, pythink2 · VPyLab', html:
-    qttl('4', 'AI시대에 더 필요해진 능력', '1', 'pythink2 · VPyLab', '', 2) +
+    qttl('4', 'AI 시대에 더 필요해진 사고력과 창조적 문제해결능력', '1', 'pythink2 · VPyLab', '', 2) +
     '<div class="pair">' +
       card('pythink2', '21-pythink2-로드맵.webp',
         '여덟 개 월드 로드맵으로 출력부터 반복까지 단계 따라가기 | AI 코치 힌트로 답 대신 생각 유도하기',
@@ -239,7 +239,7 @@
     notes: '두 도구 모두 학생이 코드를 직접 쓰며 생각하는 도구입니다. pythink2는 여덟 개 월드 로드맵과 AI 코치 힌트로 학습 순서를 잡아 줍니다. VPyLab은 갤럭시 디스코 예제를 바로 실행해 보여 드리겠습니다.' },
 
   { sec: '바이브 코딩 프로젝트', title: '질문 4) 답 둘, Neural Explorer · 당곡고 데이터 과학', html:
-    qttl('4', 'AI시대에 더 필요해진 능력', '2', 'Neural Explorer · 당곡고 데이터 과학', '', 2) +
+    qttl('4', 'AI 시대에 더 필요해진 AI에 대한 수학적 이해와 데이터 리터러시', '2', 'Neural Explorer · 당곡고 데이터 과학', '', 2) +
     '<div class="pair">' +
       card('Neural Explorer', '23-neural-explorer-역전파.webp',
         '코드 없이 슬라이더와 그림판으로 신경망부터 LLM 첫걸음까지 다루기 | 인공 뉴런 하나의 학습 반복과 역전파 살펴보기',
@@ -254,7 +254,7 @@
     notes: 'Neural Explorer로 인공 뉴런 하나가 역전파로 학습하는 과정을 단계별로 보여 드립니다.\n순대국이 나온 날 석박지가 함께 나온 비율이 1.00이고 평소 석박지가 나온 비율이 0.20이라 향상도가 5.00이 됩니다. 이 수치를 손으로 계산해 보면 신뢰도와 향상도의 차이를 바로 이해하실 수 있습니다.' },
 
   { sec: '바이브 코딩 프로젝트', title: '질문 4) 직접 해 보는 두 가지', html:
-    qttl('4', '', '', 'AI시대에 더 필요해진 능력') +
+    qttl('4', '', '', 'AI 시대에 더 필요해진 AI 리터러시와 컴퓨팅 사고력 수업 체험') +
     '<div class="twin">' +
       '<div class="card"><div class="n">체험 1</div><h3>🤖 튜링 테스트</h3><p>튜링 테스트는 AI의 답을 사람의 답과 가려내 보는 체험</p><img alt="" src="' + C('기존-튜링-교사-진행화면.png') + '"></div>' +
       '<div class="card"><div class="n">체험 2</div><h3>🧊 프롬프트 코딩</h3><p>프롬프트 코딩은 결과물을 보고 말로 정확히 설명하는 체험</p><img alt="" src="' + C('10-프롬프트코딩-첫화면.png') + '"></div>' +
