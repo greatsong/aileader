@@ -4,7 +4,6 @@
   var HUB = 'greatsong.github.io/aileader';
   var C = function (f) { return 'captures/' + encodeURI(f); };
   var ttl = function (t, tag) { return '<div class="ttl"><h2>' + t + '</h2>' + (tag ? '<span class="tag">' + tag + '</span>' : '') + '</div>'; };
-  var kick = function (t) { return '<p class="kick">' + t + '</p>'; };
   var pts = function (s, attr) { return '<ul class="pts"' + (attr || '') + '>' + s.split(' | ').map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; };
   var shot = function (f) { return '<img class="shot" alt="" src="' + C(f) + '">'; };
   var go = function (href, label, sub) { return '<a class="go' + (sub ? ' sub' : '') + '" href="' + href + '" target="_blank" rel="noopener">' + label + ' ↗</a>'; };
@@ -14,14 +13,14 @@
   // ── 시작 ─────────────────────────────────────────────
   { sec: '시작', title: '표지', html:
     '<div class="cover">' +
-      '<div class="eyebrow">2026 고등학교 AI 디지털 선도교사 연수 · 1일차</div>' +
+      '<div class="eyebrow">동작관악 AI에듀테크 선도교사단</div>' +
       '<h1>바이브코딩 사례 나눔과<br><span class="a">아이데이션 해커톤</span></h1>' +
       '<div class="who"><b>당곡고등학교 송석리</b></div>' +
     '</div>',
     notes: '자, 오늘은 제가 직접 만든 수업용 도구를 보여 드리고 두 앱을 함께 체험하는 시간입니다.\n저는 당곡고등학교 정보 교사로, 올해 2월부터 수업용 도구를 직접 만들어 수업에 사용하고 있습니다.\n먼저 제가 만든 도구 사례를 간단히 살펴보겠습니다.' },
 
   { sec: '시작', title: '연수 메인 접속', html:
-    ttl('연수 메인 접속') + kick('오늘 접속 주소 하나로 네 가지 활동을 모두 이동하는 경로') +
+    ttl('연수 메인 접속') +
     '<div class="url"><div class="lab">노트북 주소창에 입력</div><div class="u">' + HUB + '</div></div>' +
     '<div class="dests">' +
       '<div class="d">🗺️ 우리 학교를 지도에</div><div class="d">🤖 튜링 테스트</div>' +
@@ -81,17 +80,14 @@
   { sec: '네 질문', title: '질문 3) 답 하나, 구술 평가', html:
     ttl('<span class="qno">3</span>수집되지 못한 데이터 1) 구술 평가') +
     demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
-         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') +
-           go('https://greatsong.github.io/ai-ta-project-assessment/#/9', '실제로 오가는 글', true) + '</div>' +
-         '<div class="src">시연은 발표 자료로 합니다. 학생 이름·학번·팀 이름은 가려져 있습니다</div>',
+         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',
          shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
   { sec: '네 질문', title: '질문 3) 답 둘, AI 면접 앱', html:
     ttl('<span class="qno">3</span>수집되지 못한 데이터 2) AI 면접 앱') +
     demo(pts('생기부와 대학 자료로 기본 질문을 만들고 답마다 꼬리질문 | 끝나면 연습 메모와 다음 연습 목표 | 생기부 원문이 교사 노트북 밖으로 나가지 않는 구조') +
-         '<div class="gos">' + go('demo/interview/manual-demo.html', '시연 화면 열기') + '</div>' +
-         '<div class="src">시연 화면은 가짜 학생 자료로 그리며 서버와 AI를 부르지 않습니다</div>',
+         '<div class="gos">' + go('demo/interview/manual-demo.html', '시연 화면 열기') + '</div>',
          shot('07-AI면접-시연.png')),
     notes: '구술 평가 시스템을 대입 면접 연습으로 옮긴 사례입니다. 가짜 학생 자료로 시연하겠습니다.\n가장 중요하게 본 것은 안정성과 개인정보입니다.' },
 

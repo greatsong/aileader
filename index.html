@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>바이브코딩 해커톤 · AI 디지털 선도교사 연수</title>
-<meta name="description" content="2026 고등학교 AI 디지털 선도교사 연수 · 바이브코딩 사례 나눔과 아이데이션 해커톤 연수 자료 모음">
+<title>바이브코딩 해커톤 · 동작관악 AI에듀테크 선도교사단</title>
+<meta name="description" content="동작관악 AI에듀테크 선도교사단 · 바이브코딩 사례 나눔과 아이데이션 해커톤">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
 <!--
   연수 메인 허브. 이틀 동안 쓰는 자료를 한 주소에 모은다.
   색과 글꼴은 웹앱 갤러리(gallery/style.css), 연수 슬라이드와 같은 계열이다.
-  개요 문장은 슬라이드 구성안 0절의 솔라 프로4 집필본을 그대로 옮겼다(2026-10-27).
+  서비스 개요 한 줄은 솔라 프로4 집필본(slides/_src/solar_hub_services_fix1.md, 5번은 fix2)을 그대로 옮겼다(2026-10-27).
 -->
 <style>
   :root {
@@ -91,6 +91,7 @@
   .linkcard .n { font-size: 0.78rem; font-weight: 800; color: var(--primary); }
   .linkcard .tt { font-size: 1.08rem; font-weight: 800; }
   .linkcard .d { font-size: 0.88rem; color: var(--muted); }
+  .linkcard .u { margin-top: 4px; font-size: 0.76rem; color: var(--primary); overflow-wrap: anywhere; }
   .linkcard.is-soon { background: var(--soft); box-shadow: none; color: var(--faint); }
   .linkcard.is-soon .n { color: var(--faint); }
   .soon { align-self: flex-start; margin-top: 6px; font-size: 0.72rem; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); }
@@ -130,60 +131,73 @@
 
 <div class="wrap">
   <main>
-    <div class="eyebrow">2026 고등학교 AI 디지털 선도교사 연수</div>
+    <div class="eyebrow">동작관악 AI에듀테크 선도교사단</div>
     <h1>바이브코딩 사례 나눔과 <span class="a">아이데이션 해커톤</span></h1>
     <div class="under"></div>
-    <ul class="meta">
-      <li>고등학교 AI 디지털 선도교사</li>
-      <li>이틀 연속 · 하루 90분</li>
-    </ul>
-    <p class="principle">중심 원칙은 만들기 전에 그 문제가 누군가의 진짜 문제인지 확인하는 것입니다.</p>
 
     <h2>🧭 이틀의 흐름</h2>
     <div class="days">
       <div class="day">
         <div class="n">1일차 · 90분</div>
         <div class="tt">사례와 체험</div>
-        <p>첫날은 진행자가 만든 도구 사례를 보고, 튜링 테스트와 프롬프트 코딩 두 앱을 직접 체험합니다.</p>
       </div>
       <div class="day d2">
         <div class="n">2일차 · 90분</div>
         <div class="tt">아이데이션 해커톤</div>
-        <p>둘째 날 활동은 첫날 마지막에 안내합니다.</p>
       </div>
     </div>
 
-    <h2>📂 연수 자료</h2>
+    <h2>📂 연수에 등장하는 서비스</h2>
     <div class="linkgrid">
       <a class="linkcard" href="map/">
-        <div class="n">시작</div>
-        <div class="tt">🗺️ 우리 학교를 지도에</div>
-        <div class="d">학교를 검색해 올리면 앞 화면 지도에 표시됩니다.</div>
+        <div class="tt">우리 학교를 지도에</div>
+        <div class="d">참가 교사가 자기 학교를 검색해 올리면 앞 화면 지도에 표시</div>
+        <div class="u">greatsong.github.io/aileader/map</div>
+      </a>
+      <a class="linkcard" href="https://curriculum-weaver.vercel.app/graph" target="_blank" rel="noopener">
+        <div class="tt">커리큘럼 위버</div>
+        <div class="d">교사 팀이 AI 공동설계자와 함께 융합 수업을 설계하는 플랫폼</div>
+        <div class="u">curriculum-weaver.vercel.app</div>
+      </a>
+      <a class="linkcard" href="https://danggok-ai.vercel.app" target="_blank" rel="noopener">
+        <div class="tt">AI 채팅 앱</div>
+        <div class="d">학생이 학교 계정으로 여러 AI를 한 화면에서 사용하고 교사는 대화 기록을 확인</div>
+        <div class="u">danggok-ai.vercel.app</div>
+      </a>
+      <a class="linkcard" href="https://greatsong.github.io/ai-ta-project-assessment/" target="_blank" rel="noopener">
+        <div class="tt">구술 평가</div>
+        <div class="d">팀 구술을 AI가 받아 적고 피드백 초안을 작성하며 교사가 검토한 피드백만 학생에게 전달</div>
+        <div class="u">greatsong.github.io/ai-ta-project-assessment</div>
+      </a>
+      <a class="linkcard" href="slides/demo/interview/manual-demo.html">
+        <div class="tt">AI 면접 앱</div>
+        <div class="d">생기부·대학 자료로 면접 질문을 만들고 답마다 꼬리질문을 붙이며, 여는 화면은 가짜 학생 자료 시연</div>
+        <div class="u">greatsong.github.io/aileader/slides/demo/interview/manual-demo.html</div>
+      </a>
+      <a class="linkcard" href="https://info-exam-bank.fly.dev" target="_blank" rel="noopener">
+        <div class="tt">정보과 문항 나눔</div>
+        <div class="d">정보과 교사들이 시험 문항을 성취기준별로 나누고 토의하며 학교 정보는 자동으로 삭제</div>
+        <div class="u">info-exam-bank.fly.dev</div>
       </a>
       <a class="linkcard" href="https://ai-turing-production.up.railway.app/turing-test/" target="_blank" rel="noopener">
-        <div class="n">체험 1</div>
-        <div class="tt">🤖 튜링 테스트</div>
-        <div class="d">상대의 답이 사람인지 AI인지 질문으로 가려냅니다. 수업 코드는 진행자가 알려 드립니다.</div>
+        <div class="tt">튜링 테스트</div>
+        <div class="d">질문을 던져 상대의 답이 사람인지 AI인지 가려내는 체험</div>
+        <div class="u">ai-turing-production.up.railway.app/turing-test</div>
       </a>
       <a class="linkcard" href="https://vpython-prompt-challenge.fly.dev/join" target="_blank" rel="noopener">
-        <div class="n">체험 2</div>
-        <div class="tt">🧊 프롬프트 코딩</div>
-        <div class="d">목표 장면을 문장으로 설명하면 AI가 3D 장면으로 그려 채점합니다.</div>
-      </a>
-      <a class="linkcard" href="slides/" id="slides-card">
-        <div class="n">발표</div>
-        <div class="tt">🎞️ 발표 슬라이드</div>
-        <div class="d">1일차 발표 슬라이드</div>
+        <div class="tt">프롬프트 코딩</div>
+        <div class="d">목표 장면을 문장으로 설명하면 AI가 3D 장면으로 그려 채점</div>
+        <div class="u">vpython-prompt-challenge.fly.dev</div>
       </a>
       <a class="linkcard" href="gallery/">
-        <div class="n">갤러리</div>
-        <div class="tt">🖼️ 웹앱 갤러리</div>
-        <div class="d">선생님들이 만든 웹앱과 학교에서 풀고 싶은 문제를 모았습니다. 좋아요와 댓글로 반응을 남깁니다.</div>
+        <div class="tt">웹앱 갤러리</div>
+        <div class="d">선생님들이 만든 웹앱과 학교에서 풀고 싶은 문제를 올리고 좋아요와 댓글</div>
+        <div class="u">greatsong.github.io/aileader/gallery</div>
       </a>
-      <a class="linkcard" href="gallery/#submit">
-        <div class="n">갤러리</div>
-        <div class="tt">📮 갤러리에 올리기</div>
-        <div class="d">만든 앱이나 풀고 싶은 문제를 올립니다.</div>
+      <a class="linkcard" href="slides/">
+        <div class="tt">발표 슬라이드</div>
+        <div class="d">1일차 발표 자료</div>
+        <div class="u">greatsong.github.io/aileader/slides</div>
       </a>
     </div>
 
@@ -196,11 +210,9 @@
       </div>
     </div>
 
-    <p class="presenter">진행 <b>송석리</b> · 당곡고등학교 정보 교사</p>
   </main>
 </div>
 
-<footer>2026 고등학교 AI 디지털 선도교사 연수 · 바이브코딩 사례 나눔과 아이데이션 해커톤</footer>
 
 </body>
 </html>
