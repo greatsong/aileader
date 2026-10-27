@@ -141,6 +141,9 @@
          shot('기존-튜링-결과.png')),
     notes: '결과 카드의 30% 기준을 함께 확인하고 토론 질문 하나만 골라 짧게 이야기해 보겠습니다.\n학생 수업에서는 이 토론이 중심이 됩니다.' },
 
+  // 30%의 근거: 튜링 1950 원문 442쪽(튜링 아카이브 AMT/B/19 스캔) + 솔라 번역 + 16세 튜링 사진을 한 장으로 디자인한 그림
+  { sec: '체험', title: '튜링, 1950', fx: 'fade', html: '<div class="bleed"><img alt="" src="img/turing-1950.webp"></div>', notes: '' },
+
   { sec: '체험', title: '체험 2) 프롬프트 코딩', html:
     qttl('2', '체험', '', '프롬프트 코딩', 'exp', 2) +
     '<div class="url exp top"><div class="lab">연수 메인 → 프롬프트 코딩</div><div class="u sm">vpython-prompt-challenge.fly.dev</div></div>' +
