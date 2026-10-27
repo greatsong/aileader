@@ -209,3 +209,13 @@
 .hm-leg .k small { font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
 @keyframes hmIn { from { opacity: 0; transform: scale(.35); } }
 .slide.cur .hm i:not(.x) { animation: hmIn .45s cubic-bezier(.3, 1.3, .5, 1) backwards; animation-delay: calc(.2s + var(--d, 0ms)); }
+
+/* ── 3D 빌딩 숲(히트맵 장 1단계) ── */
+.sky { position: absolute; left: 50px; right: 50px; top: 196px; bottom: 122px; z-index: 3; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+.sky canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.sky canvas:active { cursor: grabbing; }
+.slide.sky-on .sky { opacity: 1; pointer-events: auto; }
+.hm { transition: opacity .45s ease; }
+.slide.sky-on .hm { opacity: 0; }
+.sky-tip { position: absolute; transform: translate(-50%, calc(-100% - 14px)); background: var(--ink); color: #fff; font-size: 17px; font-weight: 700;
+  padding: 7px 12px; border-radius: 9px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s; }

@@ -47,6 +47,28 @@
     f.ranges = lo.map(function (a, i) { var b = hi[i]; return a > b ? '·' : a === b ? String(a) : a + '–' + b; });
     return f;
   };
+  // 3D 빌딩 숲 자료(content/skyline.js). 2D와 같은 색 단계를 쓴다
+  var skyDays = function () {
+    var end = new Date(CM.to + 'T00:00:00'), m1 = end.getMonth() + 1, vals = [], k, rows = [], cells = [], cols = [], m, d;
+    for (k in CM.days) vals.push(CM.days[k]);
+    for (d = 1; d <= 31; d++) cols.push(d === 1 || d % 5 === 0 ? String(d) : '');
+    for (m = 1; m <= m1; m++) {
+      rows.push(m + '월'); var row = [];
+      for (d = 1; d <= 31; d++) {
+        var dt = new Date(2026, m - 1, d), key = '2026-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+        row.push(dt.getMonth() !== m - 1 || dt > end ? null : (CM.days[key] || 0));
+      }
+      cells.push(row);
+    }
+    return { rows: rows, cols: cols, cells: cells, level: leveler(vals), maxH: 6.5, tip: function (r, c, v) { return (r + 1) + '월 ' + (c + 1) + '일 · ' + v + '개'; } };
+  };
+  var skyWeek = function () {
+    var names = ['월', '화', '수', '목', '금', '토', '일'], vals = [], cols = [], hr;
+    (CM.wh || []).forEach(function (r) { vals = vals.concat(r); });
+    for (hr = 0; hr < 24; hr++) cols.push(hr % 3 === 0 ? String(hr) : '');
+    return { rows: names, cols: cols, cells: CM.wh || [], level: leveler(vals), maxH: 5.5, tip: function (r, c, v) { return names[r] + '요일 ' + c + '시 · ' + v + '개'; } };
+  };
+  var skyStep = function (fn) { var d = null; return function (el, step) { if (!window.SKY) return; d = d || fn(); window.SKY.step(el, step, d); }; };
   var legendOf = function (lv, unit) {
     return '<div class="hm-leg"><span class="u">' + unit + '</span>' + lv.ranges.map(function (r, i) {
       return '<span class="k"><i class="l' + i + '"></i><small>' + r + '</small></span>'; }).join('') + '</div>';
@@ -113,10 +135,11 @@
 
   // ── 네 질문 ──────────────────────────────────────────
   // 올해 커밋: 월일별, 요일별·시간대별(진행자 맥북의 로컬 저장소 기준)
-  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 월일별', html: function () {
-    return ttl('2026년 커밋 히트맵', '월일별') + heatDays(); }, notes: '' },
-  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 요일별·시간대별', html: function () {
-    return ttl('2026년 커밋 히트맵', '요일별·시간대별') + heatWeek(); }, notes: '' },
+  // 누르면(1단계) 같은 자료가 3D 빌딩 숲으로: 위에서 내려다본 채로 건물이 솟고 카메라가 옆으로 내려온다. 끌면 돌려 보고, 건물에 올리면 커밋 수
+  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 월일별', steps: 1, html: function () {
+    return ttl('2026년 커밋 히트맵', '월일별') + heatDays() + '<div class="sky nonext"></div>'; }, onStep: skyStep(skyDays), notes: '' },
+  { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 요일별·시간대별', steps: 1, html: function () {
+    return ttl('2026년 커밋 히트맵', '요일별·시간대별') + heatWeek() + '<div class="sky nonext"></div>'; }, onStep: skyStep(skyWeek), notes: '' },
 
   { sec: '바이브 코딩 프로젝트', title: '제가 해 온 네 가지 질문', steps: 4, html:
     ttl('제가 해 온 네 가지 질문') +
