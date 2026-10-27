@@ -176,7 +176,7 @@
     '<div class="url exp top"><div class="lab">연수 메인 → 튜링 테스트</div><div class="u sm">ai-turing-production.up.railway.app/turing-test</div></div>' +
     demo(pts("연수 메인에서 '튜링 테스트' 누르기 | 수업 코드와 팀 이름 넣기 | 질문하고 사람인지 AI인지 투표하기") +
          '<div class="gos">' + go('https://ai-turing-production.up.railway.app/turing-test/teacher', '진행자 화면', true) + '</div>',
-         shot('기존-튜링-참가자-대화.png')),
+         shot('기존-튜링-참가자-대화-확대.png')),   // 대화 부분만 잘라 크게
     notes: '두세 명이 노트북 한 대로 한 팀입니다. 답변을 맡은 팀은 학생인 척 답합니다.\n사람의 답과 AI의 답이 같은 말투로 바뀌고 같은 시간 뒤에 도착하므로 내용으로만 가려내야 합니다. 라운드 1회는 20분입니다.' },
 
   { sec: '체험', title: '튜링 테스트 돌아보기', html:
