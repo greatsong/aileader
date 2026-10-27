@@ -137,12 +137,11 @@
   { sec: '소개', title: '제 소개 2', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-03.png"></div>', notes: '' },
   { sec: '소개', title: '제 소개 3', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
 
-  // 아톰의 세상과 비트의 세상: 초안(1e7e700)의 차이나는 클라스 장면 세 장(source-06·07·09)을 화면 가득 겹쳐 차례로. 앞 장 위에 다음 장이 덮인다
+  // 아톰의 세상과 비트의 세상: 초안(1e7e700)의 차이나는 클라스 장면 두 장(source-06·07)을 화면 가득 겹쳐 차례로. 앞 장 위에 다음 장이 덮인다
   { sec: '소개', title: '아톰의 세상과 비트의 세상', fx: 'fade', html:
     '<div class="bleed paper">' +
       '<div class="layer"><img alt="" src="img/atom-bit-1.webp"></div>' +
       '<div class="layer" data-s="1"><img alt="" src="img/atom-bit-2.webp"></div>' +
-      '<div class="layer" data-s="2"><img alt="" src="img/atom-bit-3.webp"></div>' +
     '</div>',
     onStep: function () { bwLoad(); },   // 다음 장(3D)을 미리 불러 둔다
     notes: '닐 거센필드는 세상을 아톰의 세상과 비트의 세상으로 구분했습니다. 아톰은 물질이고 비트는 정보입니다.\n교사가 만드는 도구는 비트의 세상에 있습니다. 풀려는 문제는 교실이라는 아톰의 세상에 있습니다.' },
@@ -160,6 +159,9 @@
   // ── 네 질문 ──────────────────────────────────────────
   // 올해 커밋: 월일별, 요일별·시간대별(진행자 맥북의 로컬 저장소 기준)
   // 누르면(1단계) 같은 자료가 3D 빌딩 숲으로: 위에서 내려다본 채로 건물이 솟고 카메라가 옆으로 내려온다. 끌면 돌려 보고, 건물에 올리면 커밋 수
+  // 간지: 세종과학고 특강(260923) 간지 모양 그대로(보라 바탕 #6B46FF에 흰 굵은 글자 한 줄)
+  { sec: '바이브 코딩 프로젝트', title: '바이브 코딩 프로젝트', fx: 'fade', html: '<div class="sep"><h2>바이브 코딩 프로젝트</h2></div>', notes: '' },
+
   { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 월일별', steps: 1, html: function () {
     return ttl('2026년 커밋 히트맵', '월일별') + heatDays() + '<div class="sky nonext"></div>'; }, onStep: skyStep(skyDays), notes: '' },
   { sec: '바이브 코딩 프로젝트', title: '2026년 커밋 히트맵 · 요일별·시간대별', steps: 1, html: function () {
