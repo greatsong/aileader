@@ -96,11 +96,18 @@
          shot('04-AI채팅-로그인.png')),
     notes: '모든 학생이 유료 AI를 사용할 수 있게 하려고 만든 도구입니다. 진행자 계정으로 직접 시연하겠습니다.\n학교망에서 여러 학생이 같은 주소로 접속해 요청 한도를 올린 일이 있었습니다. 5월에 학교 NAT 때문에 요청 한도를 분당 500회에서 3,000회로 올렸습니다.' },
 
-  { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 하나, 구술 평가', html:
-    qttl('3', '수집되지 못한 데이터', '1', '구술 평가', '', 3) +
-    demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
-         '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',   // 앱 시연은 진행자가 따로 연 브라우저에서
-         shot('06-구술평가-해결의흐름.png')),
+  { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 하나, 구술 평가 with 팅커비스', html:
+    qttl('3', '수집되지 못한 데이터', '1', '구술 평가 <span class="with">with 팅커비스</span>', '', 3) +
+    // 흐름: 구술 평가 음성 + 깃허브 기록 ⇒ 교사 + AI ⇒ 피드백 (글자만, 장에 들어오면 왼쪽부터 차례로 이어진다)
+    '<div class="oflow">' +
+      '<div class="ins"><div class="oc">구술 평가 음성</div><div class="plus">+</div>' +
+        '<div class="oc">깃허브 기록<small>코드, 데이터, 문제해결과정</small></div></div>' +
+      '<div class="arr a1"><i></i></div>' +
+      '<div class="oc mid">교사 <span>+</span> AI</div>' +
+      '<div class="arr a2"><i></i></div>' +
+      '<div class="oc out">피드백</div>' +
+    '</div>' +
+    '<div class="gos oflow-go">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',   // 앱 시연은 진행자가 따로 연 브라우저에서
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
   { sec: '바이브 코딩 프로젝트', title: '질문 3) 답 둘, AI 면접 앱', html:
