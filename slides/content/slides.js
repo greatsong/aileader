@@ -4,12 +4,16 @@
   var HUB = 'greatsong.github.io/aileader';
   var C = function (f) { return 'captures/' + encodeURI(f); };
   var ttl = function (t, tag) { return '<div class="ttl"><h2>' + t + '</h2>' + (tag ? '<span class="tag">' + tag + '</span>' : '') + '</div>'; };
-  // 질문·체험 장 제목: 위 줄에 번호 배지와 질문, 아래 줄에 답 번호와 이름. phrase가 없으면 배지와 제목을 한 줄로
-  var qttl = function (q, phrase, idx, name, tone) {
+  // 질문·체험 장 제목: 위에 질문 알약(번호 + 질문), 아래에 큰 이름과 몇 번째 답인지 보여 주는 점(total개 중 idx번째).
+  // phrase가 없으면 배지와 제목을 한 줄로. 체험 장(tone 'exp')은 알약을 '체험 n'으로
+  var qttl = function (q, phrase, idx, name, tone, total) {
     var cls = 'ttl q' + (tone ? ' ' + tone : '') + (phrase ? '' : ' one');
     if (!phrase) return '<div class="' + cls + '"><span class="qno">' + q + '</span><h2>' + name + '</h2></div>';
-    return '<div class="' + cls + '"><div class="qrow"><span class="qno">' + q + '</span><span class="qph">' + phrase + '</span></div>' +
-      '<h2>' + (idx ? '<span class="ai">' + idx + '</span>' : '') + name + '</h2></div>';
+    var chip = tone === 'exp' ? phrase + ' <b>' + q + '</b>' : '<b>' + q + '</b>' + phrase;
+    var dots = '';
+    for (var k = 1; k <= (total || 0); k++) dots += '<i' + (String(k) === String(idx || q) ? ' class="on"' : '') + '></i>';
+    return '<div class="' + cls + '"><div class="chip">' + chip + '</div>' +
+      '<h2>' + name + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</h2></div>';
   };
   var pts = function (s, attr) { return '<ul class="pts"' + (attr || '') + '>' + s.split(' | ').map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; };
   var shot = function (f) { return '<img class="shot" alt="" src="' + C(f) + '">'; };
@@ -62,7 +66,7 @@
   { sec: '소개', title: '제 소개 3', fx: 'fade', html: '<div class="full"><img alt="" src="img/intro-04.png"></div>', notes: '' },
 
   // ── 네 질문 ──────────────────────────────────────────
-  { sec: '네 질문', title: '제가 해 온 네 가지 질문', steps: 4, html:
+  { sec: '네 가지 질문', title: '제가 해 온 네 가지 질문', steps: 4, html:
     ttl('제가 해 온 네 가지 질문') +
     '<ol class="qs">' +
       '<li data-s="1"><span class="qno">1</span>10년 전, 팅커벨에 대한 저의 생각</li>' +
@@ -72,47 +76,47 @@
     '</ol>',
     notes: '올해 도구를 만들면서 이 네 질문을 붙들어 왔습니다. 오늘은 그 질문에 대한 답 몇 가지를 보여 드리겠습니다.\n10년 전 팅커벨에 대한 생각, AI가 날 도와준다면 어떤 수업을 해볼 수 있을까, 그동안 수집되지 못한 데이터를 AI가 도와준다면 어떻게 더 좋은 교육활동을 해볼 수 있을까, AI시대 아이들에게 더 필요해진 능력들을 어떻게 기르도록 도와줄 수 있을까입니다.' },
 
-  { sec: '네 질문', title: '질문 1) 10년 전, 팅커벨에 대한 생각', html:
+  { sec: '네 가지 질문', title: '질문 1) 10년 전, 팅커벨에 대한 생각', html:
     qttl('1', '', '', '10년 전, 팅커벨에 대한 저의 생각') +
     '<div class="tink"><img alt="" src="img/tinkervis.webp"></div>',   // 팅커비스 그림: ai-ta-project-assessment/raw/art/fig_ai.png
     notes: '' },
 
-  { sec: '네 질문', title: '질문 2) 답 하나, 커리큘럼 위버', html:
-    qttl('2', 'AI가 날 도와준다면', '1', '커리큘럼 위버') +
+  { sec: '네 가지 질문', title: '질문 2) 답 하나, 커리큘럼 위버', html:
+    qttl('2', 'AI가 날 도와준다면', '1', '커리큘럼 위버', '', 2) +
     demo(pts('교사 팀이 AI 공동설계자와 함께 협력 원리에 따라 융합 수업을 설계하는 플랫폼 | 성취기준을 검색하고 다른 교과의 연결된 성취기준 찾기 | 국어·영어·음악 교사 세 명이 절차를 끝까지 밟아 수업까지 실행한 사례') +
          '<div class="gos">' + go('https://curriculum-weaver.vercel.app/graph', '커리큘럼 위버 열기') + '</div>',
          shot('기존-커리큘럼위버-성운3D-0905.png')),
     notes: '로그인 없이 열리는 교육과정 지도로 짧게 시연하겠습니다. 성취기준 하나를 검색해 연결된 다른 교과를 보여 드립니다.\n10월 교사 연수 뒤 사용이 멈춘 기록도 숨기지 않고 언급하겠습니다.\n10월 연수 첫날 교사 메시지 924건, 둘째 날 289건, 그 뒤 8일 동안 0건이었으나 원인은 분석하지 않았습니다.' },
 
-  { sec: '네 질문', title: '질문 2) 답 둘, AI 채팅 앱', html:
-    qttl('2', 'AI가 날 도와준다면', '2', 'AI 채팅 앱') +
+  { sec: '네 가지 질문', title: '질문 2) 답 둘, AI 채팅 앱', html:
+    qttl('2', 'AI가 날 도와준다면', '2', 'AI 채팅 앱', '', 2) +
     demo(pts('학생이 학교 계정으로 Claude·Gemini·ChatGPT·Solar를 한 화면에서 사용 | 교사는 대화 기록과 사용량 확인 | 학습 모드와 프로젝트 모드') +
          '<div class="gos">' + go('https://danggok-ai.vercel.app', 'AI 채팅 앱 열기') + '</div>',
          shot('04-AI채팅-로그인.png')),
     notes: '모든 학생이 유료 AI를 사용할 수 있게 하려고 만든 도구입니다. 진행자 계정으로 직접 시연하겠습니다.\n학교망에서 여러 학생이 같은 주소로 접속해 요청 한도를 올린 일이 있었습니다. 5월에 학교 NAT 때문에 요청 한도를 분당 500회에서 3,000회로 올렸습니다.' },
 
-  { sec: '네 질문', title: '질문 3) 답 하나, 구술 평가', html:
-    qttl('3', '수집되지 못한 데이터', '1', '구술 평가') +
+  { sec: '네 가지 질문', title: '질문 3) 답 하나, 구술 평가', html:
+    qttl('3', '수집되지 못한 데이터', '1', '구술 평가', '', 3) +
     demo(pts('팀 구술을 녹음하면 AI가 받아 적고 피드백 초안 작성 | 교사가 검토한 피드백만 학생에게 전달') +
          '<div class="gos">' + go('https://greatsong.github.io/ai-ta-project-assessment/', '구술 평가 발표 자료') + '</div>',
          shot('06-구술평가-해결의흐름.png')),
     notes: '그동안 말로 사라지던 설명이 기록과 피드백이 됩니다. AI는 정리하고 초안을 쓰고 판단은 교사가 합니다.\n데이터 과학 팀 프로젝트에서 팀마다 3~5분 구술을 진행했습니다. 학습 효과는 아직 측정하지 않았습니다.' },
 
-  { sec: '네 질문', title: '질문 3) 답 둘, AI 면접 앱', html:
-    qttl('3', '수집되지 못한 데이터', '2', 'AI 면접 앱') +
+  { sec: '네 가지 질문', title: '질문 3) 답 둘, AI 면접 앱', html:
+    qttl('3', '수집되지 못한 데이터', '2', 'AI 면접 앱', '', 3) +
     demo(pts('생기부와 대학 자료로 기본 질문을 만들고 답마다 꼬리질문 | 끝나면 연습 메모와 다음 연습 목표 | 생기부 원문이 교사 노트북 밖으로 나가지 않는 구조') +
          '<div class="gos">' + go('demo/interview/manual-demo.html', '시연 화면 열기') + '</div>',
          shot('07-AI면접-시연.png')),
     notes: '구술 평가 시스템을 대입 면접 연습으로 옮긴 사례입니다. 가짜 학생 자료로 시연하겠습니다.\n가장 중요하게 본 것은 안정성과 개인정보입니다.' },
 
-  { sec: '네 질문', title: '질문 3) 답 셋, 정보과 문항 나눔', html:
-    qttl('3', '수집되지 못한 데이터', '3', '정보과 문항 나눔') +
+  { sec: '네 가지 질문', title: '질문 3) 답 셋, 정보과 문항 나눔', html:
+    qttl('3', '수집되지 못한 데이터', '3', '정보과 문항 나눔', '', 3) +
     demo(pts('학교명·교육청·출제자 이름 pdf에서 실제 삭제 | AI가 문항 나누고 문항마다 2022 개정 성취기준 제안, 확정은 올린 교사 | 승인된 시험지 올린 교사만 다른 교사 문항 열람') +
          '<div class="gos">' + go('https://info-exam-bank.fly.dev', '정보과 문항 나눔 열기') + '</div>',
          shot('13-문항나눔-첫화면.png')),
     notes: '학교마다 시험 문항을 만들지만 학교 밖으로 모이지 않았습니다. 정보과 교사끼리 문항을 성취기준별로 모아 보고 토의하려고 만든 도구입니다.\n진행자 계정으로 로그인해 짧게 시연하겠습니다.\n성취기준 123개, 대상 과목 여섯 가지입니다. 원본 pdf는 관리자가 승인하면 삭제됩니다.' },
 
-  { sec: '네 질문', title: '질문 4) 직접 해 보는 두 가지', html:
+  { sec: '네 가지 질문', title: '질문 4) 직접 해 보는 두 가지', html:
     qttl('4', '', '', 'AI시대에 더 필요해진 능력') +
     '<div class="twin">' +
       '<div class="card"><div class="n">체험 1</div><h3>🤖 튜링 테스트</h3><p>튜링 테스트는 AI의 답을 사람의 답과 가려내 보는 체험</p><img alt="" src="' + C('기존-튜링-교사-진행화면.png') + '"></div>' +
@@ -122,7 +126,7 @@
 
   // ── 체험 ─────────────────────────────────────────────
   { sec: '체험', title: '체험 1) 튜링 테스트', html:
-    qttl('1', '체험', '', '튜링 테스트', 'exp') +
+    qttl('1', '체험', '', '튜링 테스트', 'exp', 2) +
     '<div class="url exp top"><div class="lab">연수 메인 → 튜링 테스트</div><div class="u sm">ai-turing-production.up.railway.app/turing-test</div></div>' +
     demo(pts("연수 메인에서 '튜링 테스트' 누르기 | 수업 코드와 팀 이름 넣기 | 질문하고 사람인지 AI인지 투표하기") +
          '<div class="gos">' + go('https://ai-turing-production.up.railway.app/turing-test/teacher', '진행자 화면', true) + '</div>',
@@ -137,7 +141,7 @@
     notes: '결과 카드의 30% 기준을 함께 확인하고 토론 질문 하나만 골라 짧게 이야기해 보겠습니다.\n학생 수업에서는 이 토론이 중심이 됩니다.' },
 
   { sec: '체험', title: '체험 2) 프롬프트 코딩', html:
-    qttl('2', '체험', '', '프롬프트 코딩', 'exp') +
+    qttl('2', '체험', '', '프롬프트 코딩', 'exp', 2) +
     '<div class="url exp top"><div class="lab">연수 메인 → 프롬프트 코딩</div><div class="u sm">vpython-prompt-challenge.fly.dev</div></div>' +
     demo(pts("연수 메인에서 '프롬프트 코딩' 누르기 | 수업 코드와 번호·이름 넣기 | 목표 장면을 보고 문장으로 설명해 제출하기") +
          '<div class="gos">' + go('https://vpython-prompt-challenge.fly.dev/training', '진행자 화면', true) + '</div>',

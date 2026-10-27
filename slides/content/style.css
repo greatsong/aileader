@@ -142,21 +142,27 @@
 .ttl::after { content: ""; display: block; order: 9; width: 100%; height: 5px; margin-top: 14px; border-radius: 99px;
   background: linear-gradient(90deg, var(--hub), var(--exp)) left / 64px 100% no-repeat; }
 .ttl.q { display: block; }
-.ttl.q .qrow { display: flex; align-items: center; gap: 0; margin-bottom: 10px; }
-.ttl.q .qph { font-size: 24px; font-weight: 700; color: var(--hub); letter-spacing: -.01em; }
-.ttl.q h2 { display: flex; align-items: center; gap: 16px; font-size: 52px; line-height: 1.15; }
-.ttl.q h2 .ai { display: inline-grid; place-items: center; min-width: 44px; height: 44px; padding: 0 12px; border-radius: 13px;
-  border: 2px solid #d6d2ff; background: var(--hub-soft); color: var(--hub); font-size: 24px; font-weight: 800; letter-spacing: 0; }
+.ttl.q:not(.one)::after { display: none; }   /* 두 층 제목은 알약이 강조를 맡으므로 밑줄을 뺀다 */
+.ttl.q .chip { display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; margin-bottom: 14px; border-radius: 99px;
+  background: var(--hub-soft); color: var(--hub); font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+.ttl.q .chip b { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--hub); color: #fff; font-size: 16px; font-weight: 800; }
+.ttl.q h2 { display: flex; align-items: center; gap: 24px; font-size: 56px; line-height: 1.12; letter-spacing: -.035em; }
+.ttl.q .dots { display: inline-flex; align-items: center; gap: 8px; }
+.ttl.q .dots i { width: 12px; height: 12px; border-radius: 99px; background: #dcd8f6; }
+.ttl.q .dots i.on { width: 30px; background: var(--hub); }
+.ttl.q.exp .chip { padding: 6px 18px; background: var(--exp-soft); color: #b46e00; }
+.ttl.q.exp .chip b { width: auto; height: auto; background: none; color: inherit; font-size: inherit; margin-left: -4px; }
+.ttl.q.exp .dots i { background: #f6dfb5; } .ttl.q.exp .dots i.on { background: var(--exp); }
 .ttl.q.one { display: flex; align-items: center; flex-wrap: wrap; }
 .ttl.q.one .qno { width: 46px; height: 46px; font-size: 24px; border-radius: 14px; margin-right: 18px; }
 .ttl.q.one h2 { font-size: 50px; }
-.ttl.q.exp .qph { color: #b46e00; }
-.ttl.q.exp .qno { background: linear-gradient(135deg, #f5aa35, #d97a00); box-shadow: 0 6px 16px rgba(224, 138, 0, .28); }
-.ttl.q.exp::after { background-image: linear-gradient(90deg, var(--exp), #f5c66a); }
+.ttl.q.exp.one .qno { background: linear-gradient(135deg, #f5aa35, #d97a00); }
 @keyframes grow { from { background-size: 0 100%; } }
 .slide.cur .ttl::after { animation: grow .8s cubic-bezier(.16, .84, .3, 1) .35s backwards; }
-.slide.cur .ttl.q .qno, .slide.cur .ttl.q h2 .ai { animation: pop .55s cubic-bezier(.3, 1.4, .5, 1) .22s backwards; }
-.slide.cur .ttl.q h2 .ai { animation-delay: .32s; }
+.slide.cur .ttl.q .qno { animation: pop .55s cubic-bezier(.3, 1.4, .5, 1) .22s backwards; }
+.slide.cur .ttl.q .chip { animation: fromL .6s cubic-bezier(.16, .84, .3, 1) .12s backwards; }
+.slide.cur .ttl.q .dots i { animation: pop .45s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+.slide.cur .ttl.q .dots i:nth-child(1) { animation-delay: .45s; } .slide.cur .ttl.q .dots i:nth-child(2) { animation-delay: .52s; } .slide.cur .ttl.q .dots i:nth-child(3) { animation-delay: .59s; }
 
 /* 제목이 두 층이 되어도 캡처가 바닥을 넘지 않게 남은 높이에 맞춘다 */
 .demo .pic { height: 100%; }
