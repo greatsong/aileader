@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>바이브코딩 해커톤 — 코드 속에서 피어나는 아이디어</title>
+  <rect width="64" height="64" rx="16" fill="#5546e8"/>
+  <path d="m22 20-12 12 12 12m20-24 12 12-12 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m32 21 3.2 7.8L43 32l-7.8 3.2L32 43l-3.2-7.8L21 32l7.8-3.2Z" fill="#ffca70"/>
+</svg>
