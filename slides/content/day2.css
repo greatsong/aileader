@@ -280,3 +280,6 @@
 .hmw .bad { display: grid; gap: 6px; }
 .hmw .bad div { font-size: 17px; color: var(--muted); padding: 7px 12px; border-radius: 10px; background: var(--soft); text-decoration: line-through; text-decoration-color: rgba(239,93,60,.6); }
 .hmw .bad i { font-style: normal; font-weight: 800; color: var(--ai); margin-right: 8px; text-decoration: none; display: inline-block; }
+.fb .iss { align-self: flex-start; display: inline-flex; align-items: baseline; gap: 12px; padding: 10px 16px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; }
+.fb .iss b { font-size: 18px; } .fb .iss span { font-size: 15px; opacity: .75; font-family: var(--mono); }
+.fb .iss:hover { background: var(--hub); }
