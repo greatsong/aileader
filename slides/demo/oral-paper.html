@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>구술 평가 종이 프로토타입</title>
+<meta name="description" content="웹앱 갤러리 샘플 글(구술 평가)의 종이 프로토타입 시연">
+<link rel="icon" href="../../favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/svg+xml" sizes="any" href="../../favicon.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="../content/day2.css?v=20261030i">
+<!--
+  웹앱 갤러리 샘플 글 「어떻게 하면 학생 팀이 구술 직후 구체적인 피드백을 받을 수 있을까?」의 종이 시연.
+  2일차 진행 화면의 종이 프로토타이핑 장면(content/paper.js)과 같은 엔진으로, 종이 화면 세 장만 이 문제에 맞게 그린다.
+  ?rec 를 붙이면 머리글 없이 장면만 1280×720 비율로 보여 준다(MP4 녹화용).
+-->
+<style>
+  :root {
+    --ink: #1f1d2b; --muted: #6b6880; --faint: #9a97ad; --line: #e7e4ef; --soft: #f7f6fb; --paper: #fff;
+    --hub: #5546e8; --hub-soft: #eeecff; --exp: #e08a00; --exp-soft: #fff4e0; --ai: #ef5d3c; --ok: #0f9d76;
+    --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f3f9; color: var(--ink); font-family: var(--sans); word-break: keep-all; overflow-wrap: anywhere; }
+  header { max-width: 1000px; margin: 0 auto; padding: 22px 16px 6px; }
+  .eyebrow { font-size: .8rem; font-weight: 800; color: var(--hub); letter-spacing: .03em; }
+  h1 { margin: 4px 0 8px; font-size: clamp(1.25rem, 3.4vw, 1.8rem); letter-spacing: -.02em; line-height: 1.35; }
+  .hypo { margin: 0; color: var(--muted); font-size: .95rem; line-height: 1.65; }
+  .hypo b { color: var(--ink); }
+  .turn { display: none; margin: 10px 0 0; font-size: .85rem; color: var(--muted); }
+  @media (max-width: 640px) { .turn { display: block; } }
+  .wrap { max-width: 1000px; margin: 14px auto 0; padding: 0 16px; }
+  /* 장면은 1424×600 무대를 화면 폭에 맞춰 줄인다 */
+  .fit { position: relative; width: 100%; aspect-ratio: 1424 / 600; }
+  .fit > .pp { position: absolute; left: 0; top: 0; width: 1424px; height: 600px; transform-origin: 0 0; }
+  footer { max-width: 1000px; margin: 0 auto; padding: 14px 16px 40px; font-size: .85rem; color: var(--muted); }
+  footer a { color: var(--hub); font-weight: 700; }
+  .aiw .app { text-align: left; }
+  .aiw .app .fbk { display: grid; gap: 8px; margin-bottom: 14px; }
+  .aiw .app .fbk div { font-size: 15px; line-height: 1.45; padding: 9px 12px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); }
+  .aiw .app .fbk b { display: block; font-size: 12px; color: var(--hub); margin-bottom: 2px; }
+  .aiw .app .acts { display: flex; gap: 8px; justify-content: flex-end; }
+  .aiw .app .acts span { font-size: 14px; font-weight: 800; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--hub); color: var(--hub); }
+  .aiw .app .acts span.p { background: var(--hub); color: #fff; }
+  /* 녹화용 */
+  body.rec { background: #fff; }
+  body.rec header, body.rec footer, body.rec .replay { display: none; }
+  body.rec .wrap { max-width: none; margin: 0; padding: 88px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">웹앱 갤러리 샘플 · 종이 프로토타입 시연</div>
+  <h1>어떻게 하면 학생 팀이 구술 직후 구체적인 피드백을 받을 수 있을까?</h1>
+  <p class="hypo"><b>가설 문장</b> 고등학생 팀은 구술 평가에서 말로 한 설명이 기록으로 남지 않고 교사 혼자 여러 팀을 들으며 기록해야 하기 때문에 팀마다 구체적인 피드백을 제때 받는 데 어려움을 겪고 있을 것이다.</p>
+</header>
+<div class="wrap"><div class="fit" id="fit"></div><p class="turn">휴대폰에서는 가로로 돌려 보거나 아래 영상 파일(MP4)을 전체 화면으로 보면 크게 보입니다.</p></div>
+<footer>동작관악 AI에듀테크 선도교사단 연수 2일차 · <a href="../../gallery/">웹앱 갤러리</a> · <a href="oral-paper.mp4">영상 파일(MP4)</a></footer>
+
+<script src="../content/paper.js?v=20261030i"></script>
+<script>
+(function () {
+  if (/[?&]rec\b/.test(location.search)) document.body.classList.add('rec');
+  var K = PAPER.kit, ink = K.ink, hw = K.hw, rect = K.rect, ell = K.ell, seg = K.seg, arrow = K.arrow;
+  var SW = 230, SH = 326, S = SW / 240, ROW = [40, 350, 660], TOP = 34;
+  function at(x, sx, sy) { return [x + sx * S, TOP + sy * S]; }
+
+  // 종이 화면 세 장(viewBox 240×340): 팀 목록 → 구술 중 → 피드백 초안
+  function sheet1() {
+    K.seed(31);
+    var rows = ['1팀', '2팀', '3팀', '4팀'].map(function (t, i) {
+      var y = 104 + i * 42;
+      return ink(rect(22, y, 196, 34, 1)) + hw(50, y + 24, t, 21) + ink(rect(150, y + 6, 58, 22, .8)) + hw(179, y + 23, '녹음', 17);
+    }).join('');
+    return '<svg viewBox="0 0 240 340">' + ink(rect(14, 14, 212, 312, 1.2), 'soft') +
+      hw(120, 58, '오늘의 팀 구술', 29) + hw(120, 84, '팀마다 3~5분', 18, 'mut') + rows + hw(120, 300, '5팀 ···', 17, 'mut') + '</svg>';
+  }
+  function sheet2() {
+    K.seed(52);
+    return '<svg viewBox="0 0 240 340">' + ink(rect(14, 14, 212, 312, 1.2), 'soft') +
+      hw(120, 58, '2팀 구술 중', 29) + ink(ell(56, 116, 8, 8), 'fix') + hw(132, 132, '03:12', 54) +
+      ink(rect(26, 160, 188, 74, 1)) + hw(38, 184, '메모', 17, 'mut', 'start') + hw(38, 208, '근거 그래프 설명이 분명', 17, 'mut', 'start') +
+      ink(rect(64, 256, 112, 44, 1.5)) + hw(120, 287, '구술 끝', 27) + '</svg>';
+  }
+  function sheet3() {
+    K.seed(73);
+    return '<svg viewBox="0 0 240 340">' + ink(rect(14, 14, 212, 312, 1.2), 'soft') +
+      hw(120, 54, '피드백 초안', 29) + hw(120, 78, '2팀 · 교사 확인 전', 16, 'mut') +
+      hw(28, 108, '강점', 19, '', 'start') + ink(seg(28, 122, 212, 122, .7), 'thin') + ink(seg(28, 140, 186, 140, .7), 'thin') +
+      hw(28, 170, '다음 단계', 19, '', 'start') + ink(seg(28, 184, 206, 184, .7), 'thin') + ink(seg(28, 202, 160, 202, .7), 'thin') +
+      '<g class="fixg">' + ink(rect(52, 216, 136, 34, 1.4), 'fix') + hw(120, 241, '교사가 고치기', 21, 'fix') + '</g>' +
+      ink(rect(46, 262, 148, 42, 1.5)) + hw(120, 291, '학생에게 보내기', 22) + '</svg>';
+  }
+  var caps = '종이에 화면 세 장 손으로 그리기 | 누른 순서대로 화살표로 잇기 | 한 사람이 컴퓨터 역할 맡아 종이 바꾸기 | 지켜보는 사람이 멈칫한 곳 포스트잇에 적기 | 종이 위에서 바로 고치기 | 종이 사진과 프롬프트를 AI에게 주기'.split(' | ');
+  var box = function (cls, x, label, fn) { return '<div class="sheet ' + cls + '" style="left:' + x + 'px;top:' + TOP + 'px;width:' + SW + 'px;height:' + SH + 'px;z-index:' + (cls === 's1' ? 3 : cls === 's2' ? 2 : 1) + '">' + fn() + '<span class="lab">' + label + '</span></div>'; };
+  document.getElementById('fit').innerHTML =
+    '<div class="pp" data-scene="oral"><div class="desk">' +
+      box('s3', ROW[2], '③ 결과', sheet3) + box('s2', ROW[1], '② 핵심 행동', sheet2) + box('s1', ROW[0], '① 첫 화면', sheet1) +
+      '<svg class="arw" width="1424" height="478" style="position:absolute;left:0;top:0;pointer-events:none">' + ink(arrow(282, 196, 342, 196, 18)) + ink(arrow(592, 196, 652, 196, 18)) + '</svg>' +
+      '<div class="note y ny" style="left:362px;top:66px;width:118px;min-height:76px;font-size:27px;z-index:4"><small>팝업</small>● 녹음 중</div>' +
+      '<div class="note p np" style="left:1000px;top:96px;width:210px;min-height:150px;transform:rotate(3deg);z-index:4"><small>멈칫한 곳</small>보내기 전에 고칠 수 있나요?<svg width="170" height="40" style="position:absolute;left:14px;bottom:4px">' + ink('M8 22 L22 34 L52 6', 'fix') + '</svg></div>' +
+      '<div class="role ru" style="left:150px;top:396px">👆 사용자(교사)</div>' +
+      '<div class="role rc" style="left:690px;top:396px">🖐 컴퓨터</div>' +
+      '<div class="role ro" style="left:1004px;top:52px">👀 관찰</div>' +
+      '<div class="bubble bq" style="left:600px;top:300px">?</div>' +
+      '<div class="camf" style="left:18px;top:8px;width:900px;height:400px"></div>' +
+      '<div class="mini m1" style="left:120px;top:190px"></div><div class="mini m2" style="left:430px;top:190px"></div><div class="mini m3" style="left:740px;top:190px"></div>' +
+      '<div class="aiw" style="left:960px;top:40px">' +
+        '<div class="bar"><i></i><i></i><i></i><span>AI 채팅</span></div>' +
+        '<div class="chat"><div class="th"></div><div class="th"></div><div class="th"></div><div class="pr">시작 프롬프트</div></div>' +
+        '<div class="app"><h5>2팀 피드백 초안</h5>' +
+          '<div class="fbk"><div><b>강점</b>그래프로 근거를 분명하게 설명한 부분</div><div><b>다음 단계</b>결론의 한계를 한 문장 더하기</div></div>' +
+          '<div class="acts"><span>교사가 고치기</span><span class="p">학생에게 보내기</span></div></div>' +
+      '</div>' +
+      '<div class="flashw"></div><div class="tap"><i></i></div>' +
+      '<button class="btn replay" type="button" data-replay>↺ 처음부터</button>' +
+    '</div><ol class="steps">' + caps.map(function (c, i) { return '<li><b>' + (i + 1) + '</b>' + c + '</li>'; }).join('') + '</ol></div>';
+
+  // 무대 크기 맞추기
+  var fit = document.getElementById('fit'), pp = fit.firstChild;
+  function scale() { pp.style.transform = 'scale(' + (fit.clientWidth / 1424) + ')'; }
+  window.addEventListener('resize', scale); scale();
+
+  function run(p) {
+    var s1 = p.q('.s1'), s2 = p.q('.s2'), s3 = p.q('.s3');
+    var T = function (dx, dy, r) { return 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (r || 0) + 'deg)'; };
+    var put = function (el, from, to, ms) { return p.a(el, [{ opacity: 1, transform: from }, { opacity: 1, transform: to }], { duration: ms || 900, easing: 'cubic-bezier(.3,.8,.2,1)' }); };
+    var PILE = ROW[2] - ROW[0] + 20, PILE2 = ROW[0] + PILE - ROW[1] + 14;   // 걷어 낸 종이가 쌓이는 자리(첫 장, 둘째 장)
+    return Promise.resolve()
+      .then(function () {   // 1. 그린다
+        p.step(0);
+        [s1, s2, s3].forEach(function (s, i) {
+          p.a(s, [{ opacity: 0, transform: T(0, 40, i * 2 - 2) }, { opacity: 1, transform: T(0, 0, i * 1.2 - 1.2) }], { duration: 700, delay: i * 520 });
+          setTimeout(function () { try { p.draw(s.querySelector('svg'), 1500); } catch (e) {} }, 300 + i * 520);
+        });
+        return p.w(3600);
+      })
+      .then(function () { p.step(1); p.draw(p.q('.arw'), 900, 300); return p.w(1900); })   // 2. 잇는다
+      .then(function () {   // 3. 사람이 컴퓨터가 된다
+        p.step(2);
+        p.a(p.q('.arw'), [{ opacity: 1 }, { opacity: 0 }], { duration: 400 });
+        put(s1, T(0, 0, -1.2), T(ROW[1] - ROW[0], 0, -1));
+        put(s3, T(0, 0, 1.2), T(ROW[1] - ROW[2], 0, 1.5));
+        put(s2, T(0, 0, 0), T(0, 0, .4));
+        p.a(p.q('.ru'), [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 500 });
+        p.a(p.q('.rc'), [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 700 });
+        p.qa('.sheet .lab').forEach(function (l) { p.a(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 300 }); });
+        return p.w(1100);
+      })
+      .then(function () { var c = at(ROW[1], 179, 163); return p.tap(c[0], c[1], 800); })   // 2팀 녹음
+      .then(function () { put(s1, T(ROW[1] - ROW[0], 0, -1), T(PILE, 26, 7), 800); return p.w(900); })
+      .then(function () {
+        p.a(p.q('.ny'), [{ opacity: 0, transform: 'scale(1.5) rotate(-12deg)' }, { opacity: 1, transform: 'scale(1) rotate(-4deg)' }], { duration: 380, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+        return p.w(1300);
+      })
+      .then(function () { var c = at(ROW[1], 120, 278); return p.tap(c[0], c[1], 700); })   // 구술 끝
+      .then(function () {
+        p.a(p.q('.ny'), [{ opacity: 1 }, { opacity: 0 }], { duration: 250 });
+        put(s2, T(0, 0, .4), T(PILE2, 18, -4), 800);
+        return p.w(1000);
+      })
+      .then(function () { p.step(3); var c = at(ROW[1], 120, 283); return p.tap(c[0], c[1], 700); })   // 4. 멈칫한 곳
+      .then(function () {
+        var t = p.q('.tap'), c = at(ROW[1], 70, 300), d = at(ROW[1], 170, 300);
+        p.a(t, [{ transform: 'translate(' + t._pos[0] + 'px,' + t._pos[1] + 'px)' }, { transform: 'translate(' + c[0] + 'px,' + c[1] + 'px)' }, { transform: 'translate(' + d[0] + 'px,' + d[1] + 'px)' }, { transform: 'translate(' + t._pos[0] + 'px,' + t._pos[1] + 'px)' }], { duration: 1500, easing: 'ease-in-out' });
+        p.a(p.q('.bq'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 500 });
+        p.a(p.q('.ro'), [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 700 });
+        p.a(p.q('.np'), [{ opacity: 0, transform: 'scale(1.4) rotate(10deg)' }, { opacity: 1, transform: 'scale(1) rotate(3deg)' }], { duration: 420, delay: 1100, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+        return p.w(2300);
+      })
+      .then(function () {   // 5. 종이 위에서 고친다
+        p.step(4);
+        p.a(p.q('.bq'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+        p.a(p.q('.tap'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+        p.draw(p.q('.s3 .fixg'), 900, 260);
+        return p.w(1300);
+      })
+      .then(function () { p.draw(p.q('.np svg'), 400, 0); return p.w(1300); })
+      .then(function () {   // 6. 사진과 프롬프트를 AI에게
+        p.step(5);
+        ['.np', '.ru', '.rc', '.ro'].forEach(function (s) { p.a(p.q(s), [{ opacity: 1 }, { opacity: 0 }], { duration: 350 }); });
+        put(s1, T(PILE, 26, 7), T(0, 0, -1.2), 800);
+        put(s2, T(PILE2, 18, -4), T(0, 0, 0), 800);
+        put(s3, T(ROW[1] - ROW[2], 0, 1.5), T(0, 0, 1.2), 800);
+        return p.w(1000);
+      })
+      .then(function () { p.a(p.q('.camf'), [{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 400 }); return p.w(650); })
+      .then(function () { p.a(p.q('.flashw'), [{ opacity: 0 }, { opacity: .95, offset: .2 }, { opacity: 0 }], { duration: 650, fill: 'none' }); return p.w(500); })
+      .then(function () {
+        p.a(p.q('.camf'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+        p.a(p.q('.aiw'), [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 500 });
+        p.qa('.mini').forEach(function (m, i) {
+          var dx = 1188 + i * 40 - parseFloat(m.style.left), dy = 86 - parseFloat(m.style.top);
+          p.a(m, [{ opacity: 1, transform: 'translate(0,0) rotate(' + (i - 1) * 5 + 'deg)' }, { opacity: 1, transform: 'translate(' + dx * .5 + 'px,' + (dy - 90) + 'px)', offset: .55 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.7)' }], { duration: 1000, delay: i * 120, easing: 'ease-in-out' });
+        });
+        return p.w(1200);
+      })
+      .then(function () { p.qa('.aiw .app > *').forEach(function (x, i) { p.a(x, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: i * 300 }); }); return p.w(4500); })
+      .then(function () { p.a(p.q('.desk'), [{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'none' }); return p.w(480); })
+      .then(function () { p.root._scene.play(); });
+  }
+  PAPER.start(pp, run);   // '처음부터' 버튼은 paper.js가 처리한다
+})();
+</script>
+</body>
+</html>

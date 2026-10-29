@@ -515,6 +515,9 @@
     introHTML: introHTML, sketchHTML: sketchHTML, threeHTML: threeHTML, rotHTML: rotHTML,
     activate: function (slide) { slide.querySelectorAll('[data-tmr]').forEach(initTimer); activate(slide); },
     repaintTeams: function () { document.querySelectorAll('[data-scene="rot"]').forEach(function (r) { var before = r._n; rotBuild(r); if (r._n !== before) r.querySelectorAll('.tok').forEach(function (el) { el._at = null; }); rotPaint(r, r._round || 0); }); },
-    teamCount: teamCount, setTimer: function (el, segs, labels) { if (el._t && el._t.run) return; el._t = null; el.dataset.tmr = segs; el.dataset.labels = labels; initTimer(el); }
+    teamCount: teamCount, setTimer: function (el, segs, labels) { if (el._t && el._t.run) return; el._t = null; el.dataset.tmr = segs; el.dataset.labels = labels; initTimer(el); },
+    // 덱 밖 페이지(slides/demo/oral-paper.html 등)가 같은 손그림 도구로 자기 장면을 만들 때 사용
+    kit: { seg: seg, rect: rect, ell: ell, arrow: arrow, ink: ink, hw: hw, seed: function (n) { seed = n; } },
+    start: function (root, run) { var sc = new Scene(root, run); root._scene = sc; sc.play(); return sc; }
   };
 })();
