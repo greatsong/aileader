@@ -34,22 +34,27 @@
   };
   var bars = function (rows, max) { return rows.map(function (r) { return '<div class="hbar"><span>' + r[0] + '</span><span class="b"><i style="--w:' + (r[1] / max * 100) + '%"></i></span><span class="n">' + r[1] + '</span></div>'; }).join(''); };
 
-  // ── 선생님과 앱(발표 순서). prob는 갤러리에 올린 글 원문 ──
+  // ── 선생님과 앱(발표 순서). prob는 갤러리에 올린 글 원문. 발표자는 더 늘 수 있으므로 화면에 인원·개수를 적지 않는다 ──
+  var PRES_MIN = 40;   // 선생님 발표 전체 시간. 한 분당 타이머는 이 시간을 발표자 수로 나눠 시연 6 : 피드백 4로 정한다
+  var perSeg = function () {
+    var per = PRES_MIN / T.length, demo = Math.round(per * 0.6 * 2) / 2;
+    return demo + ',' + Math.max(0.5, Math.round((per - demo) * 2) / 2);
+  };
   var T = [
-    { name: '김연경', sub: '수도여자고등학교 · 지구과학', seg: '5,3', apps: [
+    { name: '김연경', sub: '수도여자고등학교 · 지구과학', apps: [
       { k: 'earth', title: '지구과학 가상 실험실', url: 'https://earthssaem-lab.vercel.app/', prob: '입체적인 개념 설명, 데이터 분석, 흥미 유발' }],
-      notes: '첫 순서는 지구과학 실험실 허브입니다. 앱 12개가 한 화면에 모여 있습니다. 듣는 선생님들은 우리 과목에도 가져갈 점 하나를 메모하시면 됩니다.' },
-    { name: '지윤호', sub: '경문고등학교 · 정보', seg: '6,4', apps: [
+      notes: '지구과학 실험실 허브입니다. 앱 12개가 한 화면에 모여 있습니다. 듣는 선생님들은 우리 과목에도 가져갈 점 하나를 메모하시면 됩니다.' },
+    { name: '지윤호', sub: '경문고등학교 · 정보', apps: [
       { k: 'utov', title: 'UtoV', url: 'https://unono915.github.io/UtoV/', prob: '수업에 필요한 유튜브 영상을 다운로드 받아 사용하고자할때, 영상 전체를 다운로드 받아야하는 문제.' },
       { k: 'pyvis', title: '파이썬 코드 시각화 페이지', url: 'https://unono915.github.io/py_visualize/', prob: '학생들이 코드가 어떻게 동작하는지 이해하지 못하는 문제.' }],
       notes: '두 앱은 교사가 수업 자료를 준비하는 도구(UtoV)와 학생이 코드 실행을 눈으로 따라가는 도구(파이썬 시각화)입니다. 두 앱을 이어서 시연한 뒤 피드백 두 장을 진행합니다.' },
-    { name: '이승준', sub: '', seg: '6,4', apps: [
+    { name: '이승준', sub: '', apps: [
       { k: 'toron', title: '토론 체험 대시보드', url: 'https://blink-24.github.io/toronbalpyo/', prob: '1. 시간적 어려움으로 실제 토론을 수행하지 못하는 학생들에게 체험을 제공하고 싶었습니다. 2. 학생 기록을 개별적으로 확인하고자 하였습니다. (스프레드시트와 연동하였습니다)' },
       { k: 'pisa', title: 'PISA 시험 도구', url: 'https://blink-24.github.io/pisa-validator/', prob: 'PISA 문항은 적응형 평가로 구성되어 있습니다. 그러한 소검사를 구성하여, 컴퓨터 기반 평가가 가능한 문항 세트를 구상해보는 것도 좋은 평가 고민이 아닐까 생각해 보았습니다. (데이터베이스 연동은 이루어지지 않은 상황입니다)' }],
       notes: '두 앱 모두 평가와 기록에 관한 도구입니다. 토론 앱은 스프레드시트로 학생 기록을 모으고, PISA 앱은 서버 없이 적응형 시험을 구현합니다. 피드백에서 어제 지도에 남은 동시 접속과 데이터베이스 질문에 답합니다.' },
-    { name: '강봉정', sub: '', seg: '5,3', apps: [
+    { name: '강봉정', sub: '', apps: [
       { k: 'voice', title: '발성연습', url: 'https://nimble-gumption-a586a9.netlify.app/', prob: '학생들이 자신이 내는 음을 정확하게 인식할 수 있도록 시각화해주는 프로그램' }],
-      notes: '마지막 순서입니다. 마이크로 받은 소리를 음높이로 바꿔 보여 주는 음악 수업 도구입니다. 피드백에서 어제 지도에 남은 설계의 디테일 질문에 답하고, 그 답이 바로 이어지는 워크숍의 출발점이 됩니다.' }
+      notes: '마이크로 받은 소리를 음높이로 바꿔 보여 주는 음악 수업 도구입니다. 피드백에서 어제 지도에 남은 설계의 디테일 질문에 답하고, 그 답이 바로 이어지는 워크숍의 출발점이 됩니다.' }
   ];
 
   // ── 피드백 장 자료. nums: [값, 단위, 설명], issue: 같은 내용을 I like·I wish로 남긴 깃허브 이슈(2026-10-30 등록) ──
@@ -98,8 +103,8 @@
         : '<div class="ap"><div class="pic">' + shot(a.k) + '</div>' + meta + '</div>';
     }).join('');
     return { sec: '선생님 발표', title: (i + 1) + ') ' + t.name + ' 선생님', html:
-      ttl(t.name + ' 선생님', (i + 1) + ' / 4') + (t.sub ? '<div class="whoami">' + t.sub + '</div>' : '') +
-      tmr(t.seg, '시연과 설명,피드백과 질문') +
+      ttl(t.name + ' 선생님') + (t.sub ? '<div class="whoami">' + t.sub + '</div>' : '') +
+      tmr(perSeg(), '시연과 설명,피드백과 질문') +
       '<div class="pres n' + n + '">' + apps + '</div>', notes: t.notes };
   }
   function fbSlide(k) {
@@ -141,7 +146,7 @@
   { sec: '시작', title: '오늘의 흐름', html:
     ttl('오늘의 흐름') +
     '<p class="kick">먼저 선생님들이 만든 앱을 발표로 보고, 이어서 워크숍에서 두 사람이 한 팀으로 다음 프로젝트를 종이로 먼저 만들어 봅니다.</p>' +
-    '<div class="flow"><div class="f" style="--m:5"><b>시작</b><span>5분</span></div><div class="f p" style="--m:40"><b>선생님 발표</b><span>40분 · 네 분, 앱 여섯 개</span></div>' +
+    '<div class="flow"><div class="f" style="--m:5"><b>시작</b><span>5분</span></div><div class="f p" style="--m:40"><b>선생님 발표</b><span>40분</span></div>' +
     '<div class="f w" style="--m:40"><b>아이데이션 워크숍</b><span>40분 · 두 사람이 한 팀</span></div><div class="f" style="--m:5"><b>마무리</b><span>5분</span></div></div>' +
     '<div class="outs"><div class="o"><div class="n">하나</div><h3>가설 문장과 HMW 질문</h3></div><div class="o"><div class="n">둘</div><h3>종이 화면 3장</h3></div><div class="o"><div class="n">셋</div><h3>바이브코딩 시작 프롬프트</h3></div></div>',
     notes: '발표는 선생님마다 시연 뒤 진행자가 측정한 수치와 코드로 확인한 피드백을 짧게 덧붙입니다. 워크숍 결과물은 가설 문장, 종이 화면 세 장, 바이브코딩 시작 프롬프트 한 장입니다. 발표는 시연과 피드백 순서로 진행합니다.' },
@@ -149,11 +154,10 @@
   // ── 선생님 발표 ─────────────────────────────────────────
   { sec: '선생님 발표', title: '선생님 발표', fx: 'fade', html: '<div class="sep"><h2>선생님 발표</h2></div>', notes: '' },
   { sec: '선생님 발표', title: '발표 순서', html:
-    ttl('발표 순서') + tmr('40', '선생님 발표 전체') +
-    '<div class="order">' + T.map(function (t, i) {
-      var m = t.seg.split(',').reduce(function (a, b) { return a + +b; }, 0);
+    ttl('발표 순서') + tmr(String(PRES_MIN), '선생님 발표 전체') +
+    '<div class="order' + (T.length > 4 ? ' many' : '') + '" style="--cols:' + (T.length > 4 ? Math.ceil(T.length / 2) : T.length) + '">' + T.map(function (t, i) {
       return '<div class="p"><div class="no">' + (i + 1) + '번째</div><h3>' + t.name + '</h3>' + (t.sub ? '<div class="sub">' + t.sub + '</div>' : '') +
-        '<img alt="" src="' + C(t.apps[0].k) + '"><div class="apps">' + t.apps.map(function (a) { return '<span>' + a.title + '</span>'; }).join('') + '</div><div class="min">시연과 피드백 ' + m + '분</div></div>';
+        '<img alt="" src="' + C(t.apps[0].k) + '"><div class="apps">' + t.apps.map(function (a) { return '<span>' + a.title + '</span>'; }).join('') + '</div></div>';
     }).join('') + '</div>',
     notes: '선생님마다 시연과 설명 뒤 진행자 피드백과 질문을 진행합니다. 피드백은 배포된 앱을 직접 열어 측정한 값과 공개된 코드를 읽고 확인한 사실만 담습니다. 듣는 선생님들은 우리 교실에 가져갈 점 하나를 메모합니다.' }
   ];

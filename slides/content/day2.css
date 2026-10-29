@@ -72,7 +72,8 @@
 .outs .o h3 { margin: 6px 0 0; font-size: 26px; }
 
 /* 발표 순서 */
-.order { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; flex: 1; min-height: 0; align-content: start; }
+.order { display: grid; grid-template-columns: repeat(var(--cols, 4), 1fr); gap: 18px; flex: 1; min-height: 0; align-content: start; }
+.order.many .p img { height: 96px; } .order.many .p h3 { font-size: 26px; } .order.many { gap: 14px; }
 .order .p { border-radius: 20px; border: 1px solid var(--line); background: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 22px rgba(31,29,43,.06); }
 .order .p .no { font-size: 17px; font-weight: 800; color: var(--hub); }
 .order .p h3 { margin: 0; font-size: 30px; letter-spacing: -.02em; }
