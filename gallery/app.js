@@ -316,6 +316,9 @@
     if (!f.author_name || !f.title || !f.problem || (f.kind === "app" && !f.app_url)) {
       return "별표(*) 항목을 모두 채워야 올릴 수 있습니다.";
     }
+    if (f.kind === "problem" && isBareTemplate(f.problem)) {
+      return "양식의 빈칸(누가·상황·원인·어려움)을 채워 주세요.";
+    }
     if (f.author_name.length > LIMIT.author || f.title.length > LIMIT.title || f.problem.length > LIMIT.problem) {
       return "글자 수가 너무 깁니다. 조금 줄여 주세요.";
     }
@@ -859,11 +862,16 @@
       title: "앱 이름 *", titlePh: "예: 수행평가 제출 확인판",
       problem: "이 앱으로 해결하려던 문제 *", problemPh: "누가, 어떤 장면에서, 무엇이 불편했는지 적습니다.",
     },
+    // 2일차 워크숍(2026-10-30): 제목은 HMW 질문, 본문은 가설 문장으로 받는다
     problem: {
-      title: "문제 제목 *", titlePh: "예: 상담 주간 예약 조율",
-      problem: "풀고 싶은 문제 *", problemPh: "누가, 어떤 장면에서, 무엇이 불편한지 적습니다.",
+      title: "문제 제목 (HMW 질문) *", titlePh: "예: 어떻게 하면 상담 주간 예약을 쉽게 맞출 수 있을까?",
+      problem: "풀고 싶은 문제 (가설 문장) *", problemPh: "누가, 어떤 상황에서, 무엇 때문에 어떤 어려움을 겪고 있을지 적습니다. 영상 링크는 나중에 고치기로 더합니다.",
     },
   };
+
+  // '풀고 싶은 문제'를 고르면 빈 설명 칸에 넣어 주는 양식(1단계 가설 문장 틀의 네 칸 + 영상 링크)
+  const PROBLEM_TEMPLATE = "누가: \n상황: \n원인: \n어려움: \n가설 문장: \n영상 링크: ";
+  const isBareTemplate = (v) => v.replace(/\s+/g, "") === PROBLEM_TEMPLATE.replace(/\s+/g, "");
 
   const currentKind = () => ($("input[name=kind]:checked", form) || {}).value || "app";
 
@@ -875,6 +883,9 @@
     $("#f-problem-label").textContent = t.problem;
     problemInput.placeholder = t.problemPh;
     $all(".app-only", form).forEach((el) => { el.hidden = kind !== "app"; });
+    if (kind === "problem" && !problemInput.value.trim()) problemInput.value = PROBLEM_TEMPLATE;
+    if (kind === "app" && isBareTemplate(problemInput.value)) problemInput.value = "";
+    updateCounter();
   }
 
   function updateCounter() {
