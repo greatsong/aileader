@@ -17,22 +17,21 @@
   var go = function (href, label, sub) { return '<a class="go' + (sub ? ' sub' : '') + '" href="' + href + '" target="_blank" rel="noopener">' + label + ' ↗</a>'; };
   var shot = function (f) { return '<img class="shot" alt="" src="' + C(f) + '">'; };
 
-  // ── 어제 지도(2026-10-30 07:12 응답 8건 기준, map/board.html과 같은 Apps Script) ──
-  var MAP = {
-    vibe: [['자주 씁니다', 4], ['조금 써봤어요', 2], ['처음이에요', 2]],
-    career: [['1~5년', 3], ['6~10년', 3], ['16~20년', 1], ['21~25년', 1]],
-    subject: [['정보', 3], ['국어', 1], ['물리', 1], ['음악', 1], ['지구과학', 1], ['디자인', 1]],
-    // 궁금한 것은 응답 원문 그대로(오타로 보이는 '평가사력'만 '평가'로), 학교 이름 대신 과목만
-    qs: [
-      ['국어', '다수의 사용자가 동시에 접속할 때, 깃허브 호스팅이 좋은 방안이 될 수 있을지, 또는 보다 효과적인 데이터베이스가 있을지', '토론 앱 피드백', ''],
-      ['음악', '프로그램 설계의 디테일, 프로그램 활용 측면에서 고려할 사항', '발성 연습 피드백 · 워크숍', ''],
-      ['정보', '평가', 'PISA 앱 피드백', ''],
-      ['정보', '일회성으로 사용하고 마는 것이 아닌, 학생들과 산출물을 잘 끌고 갈 수 있는 바이브코딩 꿀팁', '파이썬 시각화 피드백 · 다음 걸음', ''],
-      ['지구과학', '선도교사로서 교내 선생님들께 어떤 연수나 나눔을 하시는지', '지구과학 실험실 피드백 · 마무리', 'ws'],
-      ['물리', '수업 관련 AI 활용 방법', '워크숍 전체', 'ws']
-    ]
+  // ── 웹앱 갤러리를 장 안에 그대로 끼운다(같은 사이트라 덱이 iframe 안의 키 입력을 받을 수 있다) ──
+  // 장에 처음 들어올 때 불러 두고, 갤러리가 5초마다 새 글을 확인하므로 그대로 둔다
+  var galleryStep = function (el) {
+    var f = el.querySelector('.galframe iframe');
+    if (!f || f.getAttribute('src')) return;
+    f.addEventListener('load', function () {   // 갤러리를 누른 뒤에도 → ← 와 리모컨(PageDown/Up)은 덱이 받는다
+      try { f.contentDocument.addEventListener('keydown', function (e) {
+        if (e.target.closest && e.target.closest('input, textarea, select')) return;
+        var k = e.key;
+        if (k === 'ArrowRight' || k === 'PageDown') { e.preventDefault(); window.DECK.next(); }
+        else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); window.DECK.prev(); }
+      }); } catch (er) {}
+    });
+    f.src = f.dataset.src;
   };
-  var bars = function (rows, max) { return rows.map(function (r) { return '<div class="hbar"><span>' + r[0] + '</span><span class="b"><i style="--w:' + (r[1] / max * 100) + '%"></i></span><span class="n">' + r[1] + '</span></div>'; }).join(''); };
 
   // ── 선생님과 앱(발표 순서). prob는 갤러리에 올린 글 원문. 발표자는 더 늘 수 있으므로 화면에 인원·개수를 적지 않는다 ──
   var PRES_MIN = 40;   // 선생님 발표 전체 시간. 한 분당 타이머는 이 시간을 발표자 수로 나눠 시연 6 : 피드백 4로 정한다
@@ -130,18 +129,15 @@
       '<div class="who"><b>당곡고등학교 송석리</b></div>' +
     '</div>', notes: '' },
 
-  { sec: '시작', title: '어제 지도에 남긴 것', html:
-    ttl('어제 지도에 남긴 것', '응답 8건') +
-    '<div class="mapd"><div class="tiles">' +
-      '<div class="tile"><div class="k">학교</div><div class="v">8<small>곳</small></div><div class="s">동작구 5 · 관악구 3</div></div>' +
-      '<div class="tile"><div class="k">궁금한 것</div><div class="v">6<small>개</small></div><div class="s">오늘 안에서 답하기</div></div>' +
-      '<div class="tile w"><div class="k">바이브코딩 경험</div>' + bars(MAP.vibe, 4) + '</div>' +
-      '<div class="tile w"><div class="k">교육 경력</div>' + bars(MAP.career, 4) + '</div>' +
-      '<div class="tile w"><div class="k">과목</div><div class="subj">' + MAP.subject.map(function (s) { return '<span>' + s[0] + '<b>' + s[1] + '</b></span>'; }).join('') + '</div></div>' +
-    '</div><div class="qlist">' + MAP.qs.map(function (q) {
-      return '<div class="qi"><div class="q"><small>' + q[0] + '</small>' + q[1] + '</div><div class="a' + (q[3] ? ' ' + q[3] : '') + '">→ ' + q[2] + '</div></div>';
-    }).join('') + '</div></div>',
-    notes: '어제 지도에 남긴 궁금한 것 여섯 개는 오늘 발표 피드백과 워크숍 안에서 답합니다. 동시 접속과 데이터베이스 질문은 토론 앱 피드백에서, 설계의 세부와 활용 질문은 발성 연습 앱 피드백과 워크숍에서, 평가 질문은 PISA 앱 피드백에서 다룹니다. 산출물을 일회성으로 끝내지 않는 방법과 교내 연수·나눔 질문은 마무리에서 답합니다.' },
+  { sec: '시작', title: '웹앱 갤러리', html:
+    ttl('웹앱 갤러리') +
+    '<div class="gal"><div class="gside">' +
+      '<img class="gqr" alt="" src="../assets/qr/gallery.svg">' +
+      '<div class="gl">새로 올리기</div><div class="gu">greatsong.github.io/<br>aileader/gallery</div>' +
+      '<div class="gos">' + go('../gallery/', '새 탭에서 열기', true) + '</div>' +
+    '</div><div class="galframe nonext"><iframe title="웹앱 갤러리" data-src="../gallery/"></iframe></div></div>',
+    onStep: galleryStep,
+    notes: '어제 올려 주신 앱과 글을 갤러리 화면 그대로 띄웠습니다. 화면 안에서 눌러 앱을 바로 열어 볼 수 있습니다.\n아직 올리지 않으신 선생님은 QR이나 주소로 들어가 올려 주시면 이 화면에 바로 나타납니다.' },
 
   { sec: '시작', title: '오늘의 흐름', html:
     ttl('오늘의 흐름') +
