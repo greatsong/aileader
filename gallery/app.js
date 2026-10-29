@@ -463,7 +463,8 @@
     // 문제 설명: 길면 접어 두고 '더 보기'
     const problemEl = $(".card-problem", card);
     const moreBtn = $(".btn-more", card);
-    problemEl.textContent = post.problem;
+    problemEl.textContent = "";
+    appendLinked(problemEl, post.problem);
     if (post.problem.length > 110) {
       moreBtn.hidden = false;
       const setOpen = (open) => {
@@ -661,6 +662,22 @@
     });
   }
 
+  // 글·댓글 안의 http(s) 주소를 새 탭으로 여는 링크로 바꾼다. innerHTML 없이 글자 노드와 <a>를 이어 붙인다
+  const URL_IN_TEXT = /https?:\/\/[^\s<>"']+/g;
+  function appendLinked(el, text) {
+    let last = 0;
+    text.replace(URL_IN_TEXT, (m, at) => {
+      const url = m.replace(/[.,)\]!?]+$/, "");   // 문장 끝 문장부호는 주소에서 뺀다
+      if (at > last) el.appendChild(document.createTextNode(text.slice(last, at)));
+      const a = document.createElement("a");
+      a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      el.appendChild(a);
+      last = at + url.length;
+      return m;
+    });
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
+
   function commentLine(c) {
     const p = document.createElement("p");
     p.className = "cm-line";
@@ -668,7 +685,7 @@
     nameEl.className = "cm-nick";
     nameEl.textContent = c.author_name;
     p.appendChild(nameEl);
-    p.appendChild(document.createTextNode(c.content));
+    appendLinked(p, c.content);
     return p;
   }
 
