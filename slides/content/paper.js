@@ -288,42 +288,42 @@
     return s + '</svg>';
   }
   function sketchHTML() {
-    return '<div class="desk" data-scene="sketch">' +
+    return '<div class="desk" data-scene="sketch" data-stepped="1">' +
       '<div class="sheet ka" style="left:44px;top:46px;width:268px;height:380px"><span class="who">가</span>' + sketchSheet(5, ['phone', 'bars', 'chat', 'list'], 3) + '</div>' +
       '<div class="sheet kb" style="left:350px;top:46px;width:268px;height:380px"><span class="who">나</span>' + sketchSheet(9, ['qr', 'cards', 'clock', 'map'], 1) + '</div>' +
       '<div class="pick" style="left:478px;top:52px;width:150px;height:184px"></div>' +
-      '<div class="role rk" style="left:470px;top:440px;background:var(--fix);color:#fff;border-color:var(--fix)">둘이 고른 아이디어</div>' +
     '</div>';
   }
-  function sketchRun(p) {
-    var a = p.q('.ka'), b = p.q('.kb');
-    return Promise.resolve().then(function () {
+  // 클릭 단계: 0 두 장을 네 칸으로 접기 → 1 칸마다 그리기 → 2 둘이 하나 고르기
+  var SKETCH = [
+    function (p) {
+      var a = p.q('.ka'), b = p.q('.kb');
       [a, b].forEach(function (s, i) { p.a(s, [{ opacity: 0, transform: 'translateY(30px) rotate(' + (i ? 2 : -2) + 'deg)' }, { opacity: 1, transform: 'rotate(' + (i ? 1 : -1) + 'deg)' }], { duration: 600, delay: i * 200 }); });
-      return p.w(700);
-    }).then(function () {   // 네 칸으로 접은 자국
-      [a, b].forEach(function (s) {
-        p.a(s.querySelector('svg'), [{ transform: 'scaleX(1)' }, { transform: 'scaleX(.06)', offset: .45 }, { transform: 'scaleX(1)' }], { duration: 900, fill: 'none', easing: 'ease-in-out' });
-        p.draw(s.querySelector('.fold'), 500, 200);
+      return p.w(700).then(function () {   // 네 칸으로 접은 자국
+        [a, b].forEach(function (s) {
+          p.a(s.querySelector('svg'), [{ transform: 'scaleX(1)' }, { transform: 'scaleX(.06)', offset: .45 }, { transform: 'scaleX(1)' }], { duration: 900, fill: 'none', easing: 'ease-in-out' });
+          p.draw(s.querySelector('.fold'), 500, 200);
+        });
+        return p.w(1200);
       });
-      return p.w(1200);
-    }).then(function () {
-      var chain = Promise.resolve();
+    },
+    function (p) {
+      var a = p.q('.ka'), b = p.q('.kb'), chain = Promise.resolve();
       [0, 1, 2, 3].forEach(function (i) {
         chain = chain.then(function () { p.draw(a.querySelector('.q' + i), 900); p.draw(b.querySelector('.q' + i), 900); return p.w(1050); });
       });
       return chain;
-    }).then(function () {
+    },
+    function (p) {
       p.a(p.q('.pick'), [{ opacity: 0, transform: 'scale(1.3)' }, { opacity: 1, transform: 'scale(1) rotate(-3deg)' }], { duration: 450, easing: 'cubic-bezier(.3,1.4,.5,1)' });
-      p.a(p.q('.rk'), [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 300 });
-      return p.w(3800);
-    }).then(function () { p.a(p.q('.desk') || p.root, [{ opacity: 1 }, { opacity: 0 }], { duration: 400, fill: 'none' }); return p.w(380); })
-      .then(function () { p.root._scene.play(); });
-  }
+      return p.w(500);
+    }
+  ];
 
   // ── 장면 3: 종이 화면 세 장(그리기만) ──────────────────────
   function threeHTML() {
     var w = 200, h = 283, xs = [30, 270, 510];
-    return '<div class="desk" data-scene="three">' +
+    return '<div class="desk" data-scene="three" data-stepped="1">' +
       [sheet1, sheet2, sheet3].map(function (fn, i) {
         return '<div class="sheet t' + i + '" style="left:' + xs[i] + 'px;top:60px;width:' + w + 'px;height:' + h + 'px">' + fn() + '<span class="lab">' + ['① 첫 화면', '② 핵심 행동', '③ 결과'][i] + '</span></div>';
       }).join('') +
@@ -331,18 +331,22 @@
       '<svg class="arw" width="760" height="560" style="position:absolute;left:0;top:0;pointer-events:none">' + ink(arrow(236, 200, 264, 200, 10)) + ink(arrow(476, 200, 504, 200, 10)) + '</svg>' +
     '</div>';
   }
-  function threeRun(p) {
-    var ss = p.qa('.sheet');
-    ss.forEach(function (s, i) {
-      p.a(s, [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'rotate(' + (i - 1) + 'deg)' }], { duration: 600, delay: i * 400 });
-      setTimeout(function () { try { p.draw(s.querySelector('svg'), 1300); } catch (e) {} }, 200 + i * 400);
-    });
-    return p.w(2600).then(function () {
+  // 클릭 단계: 0 세 장 그리기 → 1 화살표와 포스트잇 → 2 빠진 버튼 그려 넣기
+  var THREE = [
+    function (p) {
+      p.qa('.sheet').forEach(function (s, i) {
+        p.a(s, [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'rotate(' + (i - 1) + 'deg)' }], { duration: 600, delay: i * 400 });
+        p.later(function () { p.draw(s.querySelector('svg'), 1300); }, 200 + i * 400);
+      });
+      return p.w(2600);
+    },
+    function (p) {
       p.draw(p.q('.arw'), 600, 200);
       p.a(p.q('.note'), [{ opacity: 0, transform: 'scale(1.4) rotate(-12deg)' }, { opacity: 1, transform: 'scale(1) rotate(-3deg)' }], { duration: 420, delay: 600, easing: 'cubic-bezier(.3,1.4,.5,1)' });
-      return p.w(1200);
-    }).then(function () { p.draw(p.q('.t1 .fixg'), 700, 200); });
-  }
+      return p.w(1100);
+    },
+    function (p) { p.draw(p.q('.t1 .fixg'), 700, 200); return p.w(900); }
+  ];
 
   // ── 장면 4: 교대 시연 순환(세 팀 또는 네 팀) ──────────────────
   // 팀 수는 팀 입력 장에서 4팀 칸에 이름이 있으면 4, 없으면 3. 책상은 세 팀이면 삼각형, 네 팀이면 사각형
@@ -436,7 +440,7 @@
   }
 
   // ── 장면 등록·전환 ─────────────────────────────────────
-  var RUNS = { intro: INTRO, sketch: sketchRun, three: threeRun, hyp: hypRun };
+  var RUNS = { intro: INTRO, sketch: SKETCH, three: THREE, hyp: hypRun };
   function bind(root) {
     if (root._scene) return root._scene;
     var sc = new Scene(root, RUNS[root.dataset.scene]);
