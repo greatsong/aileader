@@ -74,16 +74,24 @@
   function Scene(root, run) { this.root = root; this.run = run; this.tk = 0; scenes.push(this); }
   Scene.prototype.reset = function () {
     this.root.getAnimations({ subtree: true }).forEach(function (a) { if (a.effect && a.effect.target && a.effect.target.closest && !a.effect.target.closest('.tmr')) a.cancel(); });
-    this.root.querySelectorAll('.on, .done').forEach(function (x) { if (x.closest('.steps')) x.classList.remove('on', 'done'); });
+    this.root.querySelectorAll('.steps li, .ppdots i').forEach(function (x) { x.classList.remove('on', 'done'); });
+    var tap = this.root.querySelector('.tap'); if (tap) tap._pos = null;
   };
-  Scene.prototype.stop = function () { this.tk++; this.reset(); };
-  Scene.prototype.play = function () {
-    var self = this, tk = ++this.tk;
-    this.reset();
+  Scene.prototype.stop = function () { this.tk++; this.cur = null; this.reset(); };
+  // 재생 도구. k는 속도 배율이다(1 보통, 0 즉시). 단계 이동(goto)에서 지난 단계는 k=0으로 건너뛴다
+  Scene.prototype.api = function (tk) {
+    var self = this;
     function live() { if (tk !== self.tk) throw 'stop'; }
     var api = {
-      a: function (el, kf, o) { live(); if (!el) return null; return el.animate(kf, Object.assign({ duration: 600, fill: 'forwards', easing: 'cubic-bezier(.2,.8,.2,1)' }, o || {})); },
-      w: function (ms) { return new Promise(function (res, rej) { setTimeout(function () { tk === self.tk ? res() : rej('stop'); }, ms); }); },
+      k: 1,
+      a: function (el, kf, o) {
+        live(); if (!el) return null;
+        o = Object.assign({ duration: 600, fill: 'forwards', easing: 'cubic-bezier(.2,.8,.2,1)' }, o || {});
+        o.duration *= api.k; if (o.delay) o.delay *= api.k;
+        return el.animate(kf, o);
+      },
+      w: function (ms) { var d = ms * api.k; return new Promise(function (res, rej) { setTimeout(function () { tk === self.tk ? res() : rej('stop'); }, d); }); },
+      later: function (fn, ms) { setTimeout(function () { if (tk === self.tk) { try { fn(); } catch (e) {} } }, ms * api.k); },
       q: function (s) { return self.root.querySelector(s); },
       qa: function (s) { return Array.prototype.slice.call(self.root.querySelectorAll(s)); },
       root: self.root,
@@ -97,7 +105,7 @@
       Array.prototype.forEach.call(texts, function (t, i) { if (!t.closest('.fixg') || box.classList.contains('fixg')) api.a(t, [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: dur * .35 + i * 90 }); });
     };
     api.step = function (n) {
-      api.qa('.steps li').forEach(function (li, i) { li.classList.toggle('on', i === n); li.classList.toggle('done', i < n); });
+      api.qa('.steps li, .ppdots i').forEach(function (li, i) { li.classList.toggle('on', i === n); li.classList.toggle('done', i < n); });
     };
     api.tap = function (x, y, ms) {   // 손가락 표시를 (x, y)로 옮기고 누른다
       var t = api.q('.tap'), r = t.querySelector('i');
@@ -110,141 +118,154 @@
         return api.w(420);
       });
     };
-    this.root.querySelector('.tap') && (this.root.querySelector('.tap')._pos = null);
+    return api;
+  };
+  Scene.prototype.play = function () {
+    var self = this, tk = ++this.tk;
+    this.reset();
+    var api = this.api(tk);
     Promise.resolve().then(function () { return self.run(api); }).catch(function (e) { if (e !== 'stop') console.error(e); });
+  };
+  // 단계 장면: target 단계까지 앞 단계는 즉시 그려 두고, target 단계만 움직여 보인다(클릭 한 번에 한 단계)
+  Scene.prototype.goto = function (target) {
+    var self = this, tk = ++this.tk, phases = this.run;
+    this.reset(); this.cur = target;
+    var api = this.api(tk), chain = Promise.resolve();
+    phases.forEach(function (ph, i) {
+      if (i > target) return;
+      chain = chain.then(function () { api.k = i < target ? 0 : 1; return ph(api); });
+    });
+    chain.catch(function (e) { if (e !== 'stop') console.error(e); });
   };
 
   // ── 장면 1: 종이 프로토타이핑 전체 흐름 ──────────────────
   // 책상 좌표(1424×478). 종이 230×326, 줄 위치 x=40·350·660, 위 y=34
   var SW = 230, SH = 326, K = SW / 240, ROW = [40, 350, 660], TOP = 34;
   function at(sheetX, sx, sy) { return [sheetX + sx * K, TOP + sy * K]; }
-  function introHTML(captions) {
-    var cap = captions.map(function (c, i) { return '<li><b>' + (i + 1) + '</b>' + c + '</li>'; }).join('');
-    return '<div class="pp" data-scene="intro">' +
+  // AI 채팅 창: 종이 화면 세 장의 사진(축소본)과 시작 프롬프트를 보내면, 만들어진 HTML 첫 화면이 답으로 온다
+  function aiWindowHTML(sheets, appHTML, left, top) {
+    return '<div class="aiw" style="left:' + left + 'px;top:' + top + 'px">' +
+      '<div class="bar"><i></i><i></i><i></i><span>AI 채팅</span></div>' +
+      '<div class="msg me"><div class="ths">' + sheets.map(function (fn) { return '<div class="th">' + fn() + '</div>'; }).join('') + '</div><div class="pr">시작 프롬프트</div></div>' +
+      '<div class="msg ai"><div class="prev"><div class="pbar"><i></i><span>index.html</span></div><div class="app">' + appHTML + '</div></div></div>' +
+    '</div>';
+  }
+  // 미니 사진이 AI 창의 축소본 자리로 날아가도록 실제 위치를 잰다(무대 배율을 나눠 책상 좌표로)
+  function flyTargets(desk) {
+    var d = desk.getBoundingClientRect(), k = d.width / desk.offsetWidth || 1;
+    return Array.prototype.map.call(desk.querySelectorAll('.aiw .th'), function (th) {
+      var r = th.getBoundingClientRect(); return [(r.left - d.left) / k, (r.top - d.top) / k];
+    });
+  }
+  function introHTML() {
+    return '<div class="pp" data-scene="intro" data-stepped="1">' +
       '<div class="desk">' +
         '<div class="sheet s3" style="left:' + ROW[2] + 'px;top:' + TOP + 'px;width:' + SW + 'px;height:' + SH + 'px;z-index:1">' + sheet3() + '<span class="lab">③ 결과</span></div>' +
         '<div class="sheet s2" style="left:' + ROW[1] + 'px;top:' + TOP + 'px;width:' + SW + 'px;height:' + SH + 'px;z-index:2">' + sheet2() + '<span class="lab">② 핵심 행동</span></div>' +
         '<div class="sheet s1" style="left:' + ROW[0] + 'px;top:' + TOP + 'px;width:' + SW + 'px;height:' + SH + 'px;z-index:3">' + sheet1() + '<span class="lab">① 첫 화면</span></div>' +
         '<svg class="arw" width="1424" height="478" style="position:absolute;left:0;top:0;pointer-events:none">' +
           ink(arrow(282, 196, 342, 196, 18)) + ink(arrow(592, 196, 652, 196, 18)) + '</svg>' +
-        '<div class="note y ny" style="left:530px;top:84px;width:118px;min-height:84px;font-size:27px;z-index:4"><small>팝업</small>반복문 선택!</div>' +
-        '<div class="note p np" style="left:1000px;top:96px;width:200px;min-height:150px;transform:rotate(3deg);z-index:4"><small>멈칫한 곳</small>제출 버튼이 어디 있죠?<svg width="170" height="40" style="position:absolute;left:14px;bottom:4px">' + ink('M8 22 L22 34 L52 6', 'fix') + '</svg></div>' +
-        '<div class="role ru" style="left:150px;top:396px">👆 사용자</div>' +
-        '<div class="role rc" style="left:690px;top:396px">🖐 컴퓨터</div>' +
-        '<div class="role ro" style="left:1004px;top:52px">👀 관찰</div>' +
+        '<div class="note y ny" style="left:530px;top:92px;width:118px;min-height:76px;font-size:27px;z-index:4">반복문 선택!</div>' +
+        '<div class="note p np" style="left:1000px;top:96px;width:200px;min-height:140px;transform:rotate(3deg);z-index:4">제출 버튼이 어디 있죠?<svg width="170" height="40" style="position:absolute;left:14px;bottom:4px">' + ink('M8 22 L22 34 L52 6', 'fix') + '</svg></div>' +
+        '<div class="role emo ru" style="left:170px;top:392px">👆</div>' +
+        '<div class="role emo rc" style="left:760px;top:392px">🖐</div>' +
+        '<div class="role emo ro" style="left:1060px;top:44px">👀</div>' +
         '<div class="bubble bq" style="left:600px;top:300px">?</div>' +
         '<div class="camf" style="left:18px;top:8px;width:900px;height:400px"></div>' +
         '<div class="mini m1" style="left:120px;top:190px"></div><div class="mini m2" style="left:430px;top:190px"></div><div class="mini m3" style="left:740px;top:190px"></div>' +
-        '<div class="aiw" style="left:960px;top:52px">' +
-          '<div class="bar"><i></i><i></i><i></i><span>AI 채팅</span></div>' +
-          '<div class="chat"><div class="th"></div><div class="th"></div><div class="th"></div><div class="pr">시작 프롬프트</div></div>' +
-          '<div class="app"><h5>오늘 수업 어땠나요?</h5>' +
-            '<div class="faces"><span>😀<small>좋아요</small></span><span class="on">😐<small>보통</small></span><span>😵<small>어려워요</small></span></div>' +
-            '<span class="btn2">다음</span></div>' +
-        '</div>' +
+        aiWindowHTML([sheet1, sheet2, sheet3],
+          '<h5>오늘 수업 어땠나요?</h5>' +
+          '<div class="faces"><span>😀<small>좋아요</small></span><span class="on">😐<small>보통</small></span><span>😵<small>어려워요</small></span></div>' +
+          '<span class="btn2">다음</span>', 940, 30) +
         '<div class="flashw"></div>' +
         '<div class="tap"><i></i></div>' +
-        '<button class="btn replay" type="button" data-replay>↺ 처음부터</button>' +
       '</div>' +
-      '<ol class="steps">' + cap + '</ol>' +
+      '<div class="ppdots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
     '</div>';
   }
-  function introRun(p) {
-    var s1 = p.q('.s1'), s2 = p.q('.s2'), s3 = p.q('.s3');
-    var T = function (dx, dy, r, sc) { return 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (r || 0) + 'deg) scale(' + (sc || 1) + ')'; };
-    var put = function (el, from, to, ms, extra) { return p.a(el, [{ opacity: 1, transform: from }, { opacity: 1, transform: to }], Object.assign({ duration: ms || 900, easing: 'cubic-bezier(.3,.8,.2,1)' }, extra || {})); };
-    return Promise.resolve()
-      // 1. 그린다
-      .then(function () {
-        p.step(0);
-        [s1, s2, s3].forEach(function (s, i) {
-          p.a(s, [{ opacity: 0, transform: T(0, 40, i * 2 - 2) }, { opacity: 1, transform: T(0, 0, i * 1.2 - 1.2) }], { duration: 700, delay: i * 520 });
-          setTimeout(function () { try { p.draw(s.querySelector('svg'), 1500); } catch (e) {} }, 300 + i * 520);
+  var IT = function (dx, dy, r) { return 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (r || 0) + 'deg)'; };
+  var iput = function (p, el, from, to, ms) { return p.a(el, [{ opacity: 1, transform: from }, { opacity: 1, transform: to }], { duration: ms || 900, easing: 'cubic-bezier(.3,.8,.2,1)' }); };
+  var PILE = [ROW[2] - ROW[0] + 20, 26, 7];   // 컴퓨터 역할이 걷어 낸 첫 장이 놓이는 자리
+  var INTRO = [
+    function (p) {   // 1. 종이에 화면 세 장을 그린다
+      p.step(0);
+      [p.q('.s1'), p.q('.s2'), p.q('.s3')].forEach(function (s, i) {
+        p.a(s, [{ opacity: 0, transform: IT(0, 40, i * 2 - 2) }, { opacity: 1, transform: IT(0, 0, i * 1.2 - 1.2) }], { duration: 700, delay: i * 520 });
+        p.later(function () { p.draw(s.querySelector('svg'), 1500); }, 300 + i * 520);
+      });
+      return p.w(3300);
+    },
+    function (p) {   // 2. 누르는 순서대로 잇는다
+      p.step(1); p.draw(p.q('.arw'), 900, 300); return p.w(1500);
+    },
+    function (p) {   // 3. 세 장을 겹치고, 누른 곳에 맞춰 종이를 바꾼다
+      var s1 = p.q('.s1'), s2 = p.q('.s2'), s3 = p.q('.s3');
+      p.step(2);
+      p.a(p.q('.arw'), [{ opacity: 1 }, { opacity: 0 }], { duration: 400 });
+      iput(p, s1, IT(0, 0, -1.2), IT(ROW[1] - ROW[0], 0, -1));
+      iput(p, s3, IT(0, 0, 1.2), IT(ROW[1] - ROW[2], 0, 1.5));
+      iput(p, s2, IT(0, 0, 0), IT(0, 0, .4));
+      p.a(p.q('.ru'), [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, delay: 500 });
+      p.a(p.q('.rc'), [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, delay: 700 });
+      p.qa('.sheet .lab').forEach(function (l) { p.a(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 300 }); });
+      return p.w(1100)
+        .then(function () { var c = at(ROW[1], 120, 140); return p.tap(c[0], c[1], 800); })
+        .then(function () { var c = at(ROW[1], 120, 276); return p.tap(c[0], c[1], 600); })
+        .then(function () { iput(p, s1, IT(ROW[1] - ROW[0], 0, -1), IT(PILE[0], PILE[1], PILE[2]), 800); return p.w(900); })
+        .then(function () { var c = at(ROW[1], 169, 119); return p.tap(c[0], c[1], 600); })
+        .then(function () {
+          p.a(p.q('.ny'), [{ opacity: 0, transform: 'scale(1.5) rotate(-12deg)' }, { opacity: 1, transform: 'scale(1) rotate(-4deg)' }], { duration: 380, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+          return p.w(600);
         });
-        return p.w(3600);
-      })
-      // 2. 잇는다
-      .then(function () { p.step(1); p.draw(p.q('.arw'), 900, 300); return p.w(1900); })
-      // 3. 사람이 컴퓨터가 된다: 세 장을 한 자리에 겹치고 손가락으로 누른다
-      .then(function () {
-        p.step(2);
-        p.a(p.q('.arw'), [{ opacity: 1 }, { opacity: 0 }], { duration: 400 });
-        put(s1, T(0, 0, -1.2), T(ROW[1] - ROW[0], 0, -1));
-        put(s3, T(0, 0, 1.2), T(ROW[1] - ROW[2], 0, 1.5));
-        put(s2, T(0, 0, 0), T(0, 0, .4));
-        p.a(p.q('.ru'), [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, delay: 500 });
-        p.a(p.q('.rc'), [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, delay: 700 });
-        p.qa('.sheet .lab').forEach(function (l) { p.a(l, [{ opacity: 1 }, { opacity: 0 }], { duration: 300 }); });
-        return p.w(1100);
-      })
-      .then(function () { var c = at(ROW[1], 120, 140); return p.tap(c[0], c[1], 800); })
-      .then(function () { var c = at(ROW[1], 120, 276); return p.tap(c[0], c[1], 600); })
-      .then(function () {   // 컴퓨터가 첫 장을 걷어 낸다
-        put(s1, T(ROW[1] - ROW[0], 0, -1), T(ROW[2] - ROW[0] + 20, 26, 7), 800);
-        return p.w(900);
-      })
-      .then(function () { var c = at(ROW[1], 169, 119); return p.tap(c[0], c[1], 600); })
-      .then(function () {
-        p.a(p.q('.ny'), [{ opacity: 0, transform: 'scale(1.5) rotate(-12deg)' }, { opacity: 1, transform: 'scale(1) rotate(-4deg)' }], { duration: 380, easing: 'cubic-bezier(.3,1.4,.5,1)' });
-        return p.w(1000);
-      })
-      // 4. 막힌 곳을 찾는다
-      .then(function () { p.step(3); var c = at(ROW[1], 120, 262); return p.tap(c[0], c[1], 700); })
-      .then(function () {
-        var t = p.q('.tap');
-        var c = at(ROW[1], 60, 290), d = at(ROW[1], 180, 290);
+    },
+    function (p) {   // 4. 멈칫한 곳을 포스트잇에 적는다
+      p.step(3);
+      var c0 = at(ROW[1], 120, 262);
+      return p.tap(c0[0], c0[1], 700).then(function () {
+        var t = p.q('.tap'), c = at(ROW[1], 60, 290), d = at(ROW[1], 180, 290);
         p.a(t, [{ transform: 'translate(' + t._pos[0] + 'px,' + t._pos[1] + 'px)' }, { transform: 'translate(' + c[0] + 'px,' + c[1] + 'px)' }, { transform: 'translate(' + d[0] + 'px,' + d[1] + 'px)' }, { transform: 'translate(' + t._pos[0] + 'px,' + t._pos[1] + 'px)' }], { duration: 1500, easing: 'ease-in-out' });
         p.a(p.q('.bq'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 500 });
         p.a(p.q('.ro'), [{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 700 });
         p.a(p.q('.np'), [{ opacity: 0, transform: 'scale(1.4) rotate(10deg)' }, { opacity: 1, transform: 'scale(1) rotate(3deg)' }], { duration: 420, delay: 1100, easing: 'cubic-bezier(.3,1.4,.5,1)' });
-        return p.w(2300);
-      })
-      // 5. 종이 위에서 고친다
-      .then(function () {
-        p.step(4);
-        p.a(p.q('.bq'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
-        p.a(p.q('.tap'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
-        p.draw(p.q('.s2 .fixg'), 900, 260);
-        return p.w(1300);
-      })
-      .then(function () { p.draw(p.q('.np svg'), 400, 0); return p.w(1300); })
-      // 6. 사진과 프롬프트를 AI에게
-      .then(function () {
-        p.step(5);
-        ['.ny', '.np', '.ru', '.rc', '.ro'].forEach(function (s) { p.a(p.q(s), [{ opacity: 1 }, { opacity: 0 }], { duration: 350 }); });
-        put(s1, T(ROW[2] - ROW[0] + 20, 26, 7), T(0, 0, -1.2), 800);
-        put(s3, T(ROW[1] - ROW[2], 0, 1.5), T(0, 0, 1.2), 800);
-        put(s2, T(0, 0, .4), T(0, 0, 0), 800);
-        return p.w(1000);
-      })
-      .then(function () {
-        p.a(p.q('.camf'), [{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 400 });
-        return p.w(650);
-      })
-      .then(function () {
-        p.a(p.q('.flashw'), [{ opacity: 0 }, { opacity: .95, offset: .2 }, { opacity: 0 }], { duration: 650, fill: 'none' });
-        return p.w(500);
-      })
-      .then(function () {
-        p.a(p.q('.camf'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
-        p.a(p.q('.aiw'), [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 500 });
-        // 사진 세 장이 AI 채팅 창의 첫 칸으로 날아간다
-        p.qa('.mini').forEach(function (m, i) {
-          var dx = 1188 + i * 40 - parseFloat(m.style.left), dy = 98 - parseFloat(m.style.top);
-          p.a(m, [{ opacity: 1, transform: 'translate(0,0) rotate(' + (i - 1) * 5 + 'deg)' }, { opacity: 1, transform: 'translate(' + dx * .5 + 'px,' + (dy - 90) + 'px) rotate(0)', offset: .55 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.7)' }], { duration: 1000, delay: i * 120, easing: 'ease-in-out' });
+        return p.w(1600);
+      });
+    },
+    function (p) {   // 5. 종이 위에서 바로 고친다
+      p.step(4);
+      p.a(p.q('.bq'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+      p.a(p.q('.tap'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+      p.draw(p.q('.s2 .fixg'), 900, 260);
+      return p.w(1300).then(function () { p.draw(p.q('.np svg'), 400, 0); return p.w(600); });
+    },
+    function (p) {   // 6. 종이 사진과 시작 프롬프트를 AI에게 준다
+      var s1 = p.q('.s1'), s2 = p.q('.s2'), s3 = p.q('.s3');
+      p.step(5);
+      ['.ny', '.np', '.ru', '.rc', '.ro'].forEach(function (x) { p.a(p.q(x), [{ opacity: 1 }, { opacity: 0 }], { duration: 350 }); });
+      iput(p, s1, IT(PILE[0], PILE[1], PILE[2]), IT(0, 0, -1.2), 800);
+      iput(p, s3, IT(ROW[1] - ROW[2], 0, 1.5), IT(0, 0, 1.2), 800);
+      iput(p, s2, IT(0, 0, .4), IT(0, 0, 0), 800);
+      return p.w(1000)
+        .then(function () { p.a(p.q('.camf'), [{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 400 }); return p.w(650); })
+        .then(function () { p.a(p.q('.flashw'), [{ opacity: 0 }, { opacity: .95, offset: .2 }, { opacity: 0 }], { duration: 650, fill: 'none' }); return p.w(500); })
+        .then(function () {
+          p.a(p.q('.camf'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
+          p.a(p.q('.aiw'), [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 500 });
+          var tg = flyTargets(p.q('.desk'));
+          p.qa('.mini').forEach(function (m, i) {
+            var dx = (tg[i] ? tg[i][0] : 1188 + i * 40) - parseFloat(m.style.left), dy = (tg[i] ? tg[i][1] : 98) - parseFloat(m.style.top);
+            p.a(m, [{ opacity: 1, transform: 'translate(0,0) rotate(' + (i - 1) * 5 + 'deg)' }, { opacity: 1, transform: 'translate(' + dx * .5 + 'px,' + (dy - 90) + 'px) rotate(0)', offset: .55 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.8)' }], { duration: 1000, delay: i * 120, easing: 'ease-in-out' });
+          });
+          p.qa('.aiw .th').forEach(function (th, i) { p.a(th, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 900 + i * 120 }); });
+          return p.w(1300);
+        })
+        .then(function () {
+          p.a(p.q('.aiw .pr'), [{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+          p.a(p.q('.aiw .msg.ai'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: 500 });
+          p.qa('.aiw .app > *').forEach(function (x, i) { p.a(x, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: 900 + i * 260 }); });
+          return p.w(1800);
         });
-        return p.w(1200);
-      })
-      .then(function () {
-        p.qa('.aiw .app > *').forEach(function (x, i) { p.a(x, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: i * 260 }); });
-        return p.w(4200);
-      })
-      .then(function () {
-        p.a(p.q('.desk'), [{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'none' });
-        return p.w(480);
-      })
-      .then(function () { p.root._scene.play(); });
-  }
+    }
+  ];
 
   // ── 장면 2: 4칸 스케치(두 사람이 각자) ───────────────────
   function quad(seedN, kind, ox, oy) {   // 칸 하나(120×160) 안의 낙서
@@ -346,15 +367,12 @@
     if (root._n === n) return;
     root._n = n;
     var line = 'fill:none;stroke:#b9ab92;stroke-width:3;stroke-linecap:round';
-    var s = '<div class="rnd"><span class="rt">준비</span><small class="rs"></small></div>' +
-      '<div class="seg ctl2"><button class="btn" type="button" data-round="1">1라운드</button><button class="btn" type="button" data-round="2">2라운드</button></div>' +
+    var s = '<div class="rnd"><span class="rt"></span></div>' +
       '<svg width="680" height="560" style="position:absolute;left:0;top:0;pointer-events:none">' +
       L.arcs.map(function (d) { return '<path style="' + line + ';stroke-dasharray:10 9" d="' + d + '"/>'; }).join('') +
       L.heads.map(function (d) { return '<path style="' + line + '" d="' + d + '"/>'; }).join('') + '</svg>';
     L.tb.forEach(function (c, t) {
       s += '<div class="tb" style="left:' + c[0] + 'px;top:' + c[1] + 'px"><i class="pp1"></i><i class="pp2"></i><i class="pp3"></i><b style="color:var(--t' + (t + 1) + ')">' + (t + 1) + '팀 책상</b></div>';
-      var sc = spot(n, t, 'c'), su = spot(n, t, 'u');
-      s += '<div class="spot" style="left:' + sc[0] + 'px;top:' + (sc[1] + 40) + 'px">컴퓨터</div><div class="spot" style="left:' + su[0] + 'px;top:' + (su[1] + 40) + 'px">사용자</div>';
     });
     L.tb.forEach(function (c, t) { ['a', 'b'].forEach(function (m) { s += '<div class="tok" data-t="' + t + '" data-m="' + m + '" style="background:var(--t' + (t + 1) + ')"></div>'; }); });
     root.innerHTML = s;
@@ -365,26 +383,23 @@
     if (round === 1) return m === 'a' ? spot(n, nx, 'u') : spot(n, t, 'c');
     return m === 'a' ? spot(n, t, 'c') : spot(n, nx, 'u');
   }
-  function rotPaint(root, round, p) {
+  function rotPaint(root, round, animate) {
+    var before = root._n;
     rotBuild(root);
+    if (root._n !== before) root.querySelectorAll('.tok').forEach(function (el) { el._at = null; });
     var names = teamNames(), n = root._n;
     root.querySelectorAll('.tok').forEach(function (el) {
       var t = +el.dataset.t, m = el.dataset.m, nm = names[t][m === 'a' ? 0 : 1];
       el.textContent = nm.length > 4 ? nm.slice(0, 4) : nm;
       var to = rotPos(n, t, m, round), from = el._at || rotPos(n, t, m, 0);
       el._at = to;
-      if (p) p.a(el, [{ transform: 'translate(' + from[0] + 'px,' + from[1] + 'px)' }, { transform: 'translate(' + to[0] + 'px,' + to[1] + 'px)' }], { duration: 1300, delay: (m === 'a' ? 0 : 150) + t * 90, easing: 'cubic-bezier(.45,0,.2,1)' });
-      else { el.getAnimations().forEach(function (a) { a.cancel(); }); el.style.transform = 'translate(' + to[0] + 'px,' + to[1] + 'px)'; }
+      el.getAnimations().forEach(function (a) { a.cancel(); });
+      el.style.transform = 'translate(' + to[0] + 'px,' + to[1] + 'px)';   // 애니메이션이 취소돼도 이 자리에 남는다
+      if (animate && (from[0] !== to[0] || from[1] !== to[1]))
+        el.animate([{ transform: 'translate(' + from[0] + 'px,' + from[1] + 'px)' }, { transform: 'translate(' + to[0] + 'px,' + to[1] + 'px)' }], { duration: 1300, delay: (m === 'a' ? 0 : 150) + t * 90, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'backwards' });
     });
-    var txt = [['준비', '팀마다 두 사람이 자기 책상에'], ['1라운드', '가는 다음 팀의 사용자, 나는 우리 팀의 컴퓨터'], ['2라운드', '역할을 바꿔 나는 다음 팀의 사용자, 가는 컴퓨터']][round];
-    root.querySelector('.rt').textContent = txt[0] + ' · ' + n + '팀'; root.querySelector('.rs').textContent = txt[1];
-    root.querySelectorAll('[data-round]').forEach(function (b) { b.classList.toggle('on', +b.dataset.round === round); });
-  }
-  function rotRun(p) {
-    rotBuild(p.root);
-    p.qa('.tok').forEach(function (el) { el._at = null; });
-    rotPaint(p.root, 0);
-    return p.w(1600).then(function () { p.root._round = 1; rotPaint(p.root, 1, p); });
+    root.querySelector('.rt').textContent = ['', '1라운드', '2라운드'][round] || '';
+    root._round = round;
   }
 
   // ── 1단계 문장 틀 채우기 ─────────────────────────────────
@@ -421,26 +436,33 @@
   }
 
   // ── 장면 등록·전환 ─────────────────────────────────────
-  var RUNS = { intro: introRun, sketch: sketchRun, three: threeRun, rot: rotRun, hyp: hypRun };
+  var RUNS = { intro: INTRO, sketch: sketchRun, three: threeRun, hyp: hypRun };
   function bind(root) {
     if (root._scene) return root._scene;
     var sc = new Scene(root, RUNS[root.dataset.scene]);
     root._scene = sc; return sc;
   }
-  function activate(slide) {
-    scenes.forEach(function (sc) { if (!slide.contains(sc.root)) sc.stop(); });
+  function activate(slide, step) {
+    step = step || 0;
+    scenes.forEach(function (sc) { if (!slide.contains(sc.root)) { sc.stop(); sc.playing = false; } });
     slide.querySelectorAll('[data-scene]').forEach(function (root) {
+      if (root.dataset.scene === 'rot') {   // 교대 순환: 0 준비, 1 1라운드, 2 2라운드. 같은 장 안에서 앞뒤로 넘길 때만 움직인다
+        var moving = root._live && root._round !== step;
+        if (!root._live) root.querySelectorAll('.tok').forEach(function (el) { el._at = null; });
+        rotPaint(root, step, moving);
+        root._live = true;
+        return;
+      }
       var sc = bind(root);
-      if (!sc.playing || !sc.root.closest('.slide').classList.contains('cur')) sc.play();
+      if (root.dataset.stepped) { if (sc.cur !== step) sc.goto(step); return; }
+      if (!sc.playing) sc.play();
       sc.playing = true;
     });
-    scenes.forEach(function (sc) { if (!slide.contains(sc.root)) sc.playing = false; });
+    slide.ownerDocument.querySelectorAll('[data-scene="rot"]').forEach(function (r) { if (!slide.contains(r)) r._live = false; });
   }
   document.addEventListener('click', function (e) {
     var r = e.target.closest('[data-replay]');
-    if (r) { var root = r.closest('[data-scene]'); if (root && root._scene) root._scene.play(); return; }
-    var rb = e.target.closest('[data-round]');
-    if (rb) { var rr = rb.closest('[data-scene]'); var sc = bind(rr); sc.tk++; var rnd2 = +rb.dataset.round; rr._round = rnd2; var api = { a: function (el, kf, o) { return el.animate(kf, Object.assign({ duration: 600, fill: 'forwards' }, o)); } }; rotPaint(rr, rnd2, api); }
+    if (r) { var root = r.closest('[data-scene]'); if (root && root._scene) root._scene.play(); }
   });
 
   // ── 단계 타이머 ───────────────────────────────────────
@@ -513,11 +535,12 @@
 
   window.PAPER = {
     introHTML: introHTML, sketchHTML: sketchHTML, threeHTML: threeHTML, rotHTML: rotHTML,
-    activate: function (slide) { slide.querySelectorAll('[data-tmr]').forEach(initTimer); activate(slide); },
-    repaintTeams: function () { document.querySelectorAll('[data-scene="rot"]').forEach(function (r) { var before = r._n; rotBuild(r); if (r._n !== before) r.querySelectorAll('.tok').forEach(function (el) { el._at = null; }); rotPaint(r, r._round || 0); }); },
+    activate: function (slide, step) { slide.querySelectorAll('[data-tmr]').forEach(initTimer); activate(slide, step); },
+    repaintTeams: function () { document.querySelectorAll('[data-scene="rot"]').forEach(function (r) { rotPaint(r, r._round || 0); }); },
     teamCount: teamCount, setTimer: function (el, segs, labels) { if (el._t && el._t.run) return; el._t = null; el.dataset.tmr = segs; el.dataset.labels = labels; initTimer(el); },
     // 덱 밖 페이지(slides/demo/oral-paper.html 등)가 같은 손그림 도구로 자기 장면을 만들 때 사용
     kit: { seg: seg, rect: rect, ell: ell, arrow: arrow, ink: ink, hw: hw, seed: function (n) { seed = n; } },
+    aiWindowHTML: aiWindowHTML, flyTargets: flyTargets,
     start: function (root, run) { var sc = new Scene(root, run); root._scene = sc; sc.play(); return sc; }
   };
 })();

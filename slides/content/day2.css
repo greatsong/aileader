@@ -293,3 +293,30 @@
 .gal .gu { font-family: var(--mono, ui-monospace); font-size: 21px; font-weight: 800; line-height: 1.35; white-space: nowrap; }
 .galframe { position: relative; border-radius: 18px; border: 1px solid var(--line); overflow: hidden; box-shadow: 0 10px 30px rgba(31,29,43,.12); background: #f4f3f9; }
 .galframe iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+
+/* AI 채팅 창: 보낸 사진 세 장(종이 축소본)과 시작 프롬프트 → 답으로 온 HTML 첫 화면(브라우저 틀) */
+.aiw .msg.me { display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 12px 14px 6px; }
+.aiw .ths { display: flex; gap: 6px; }
+.aiw .th { width: 40px; height: 57px; border-radius: 3px; background: var(--sheet); border: 1px solid #e3d7bf; box-shadow: 0 2px 5px rgba(80,60,30,.15); overflow: hidden; opacity: 0; }
+.aiw .th svg { width: 100%; height: 100%; display: block; }
+.aiw .th .ink { stroke-dashoffset: 0; stroke-width: 5; }
+.aiw .th .hw { opacity: 1; }
+.aiw .pr { opacity: 0; }
+.aiw .msg.ai { padding: 6px 14px 16px; opacity: 0; }
+.aiw .prev { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.aiw .pbar { display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 10px; background: #f6f5fa; border-bottom: 1px solid var(--line); }
+.aiw .pbar i { width: 9px; height: 9px; border-radius: 50%; background: #d9d5e6; box-shadow: 13px 0 0 #d9d5e6, 26px 0 0 #d9d5e6; margin-right: 30px; }
+.aiw .pbar span { font-size: 12px; color: var(--muted); font-weight: 700; font-family: var(--mono, ui-monospace); }
+.aiw .prev .app { margin: 0; border: 0; border-radius: 0; }
+
+/* 클릭 단계 표시(글자 없이 점만) */
+.ppdots { display: flex; gap: 10px; justify-content: center; }
+.ppdots i { width: 12px; height: 12px; border-radius: 99px; background: var(--line); transition: width .3s, background .3s; }
+.ppdots i.done { background: #e9c58a; }
+.ppdots i.on { width: 34px; background: var(--exp); }
+.role.emo { font-size: 30px; padding: 2px 10px; border: 0; background: rgba(255,255,255,.85); box-shadow: 0 4px 10px rgba(80,60,30,.15); }
+
+/* 4단계 교대 순환: 설명 없이 그림만, 가운데 크게 */
+.rot { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: flex-start; }
+.rot .desk { width: 680px; height: 560px; flex: none; }
+.rot .rnd { font-size: 30px; }

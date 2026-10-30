@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" sizes="any" href="../../favicon.svg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap">
-<link rel="stylesheet" href="../content/day2.css?v=20261030i">
+<link rel="stylesheet" href="../content/day2.css?v=20261030m">
 <!--
   웹앱 갤러리 샘플 글 「어떻게 하면 학생 팀이 구술 직후 구체적인 피드백을 받을 수 있을까?」의 종이 시연.
   2일차 진행 화면의 종이 프로토타이핑 장면(content/paper.js)과 같은 엔진으로, 종이 화면 세 장만 이 문제에 맞게 그린다.
@@ -36,13 +36,13 @@
   .fit > .pp { position: absolute; left: 0; top: 0; width: 1424px; height: 600px; transform-origin: 0 0; }
   footer { max-width: 1000px; margin: 0 auto; padding: 14px 16px 40px; font-size: .85rem; color: var(--muted); }
   footer a { color: var(--hub); font-weight: 700; }
-  .aiw .app { text-align: left; }
-  .aiw .app .fbk { display: grid; gap: 8px; margin-bottom: 14px; }
-  .aiw .app .fbk div { font-size: 15px; line-height: 1.45; padding: 9px 12px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); }
-  .aiw .app .fbk b { display: block; font-size: 12px; color: var(--hub); margin-bottom: 2px; }
-  .aiw .app .acts { display: flex; gap: 8px; justify-content: flex-end; }
-  .aiw .app .acts span { font-size: 14px; font-weight: 800; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--hub); color: var(--hub); }
-  .aiw .app .acts span.p { background: var(--hub); color: #fff; }
+  .aiw .app { text-align: left; padding: 14px 16px 16px; }
+  .aiw .app h5 { margin: 0; text-align: center; }
+  .aiw .app .sub2 { text-align: center; font-size: 13px; color: var(--muted); margin: 2px 0 12px; }
+  .aiw .app .rows { display: grid; gap: 7px; }
+  .aiw .app .rows div { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px 8px 14px; border: 1px solid var(--line); border-radius: 10px; }
+  .aiw .app .rows b { font-size: 15px; }
+  .aiw .app .rows span { font-size: 13px; font-weight: 800; color: #fff; background: var(--hub); padding: 5px 12px; border-radius: 8px; }
   /* 녹화용 */
   body.rec { background: #fff; }
   body.rec header, body.rec footer, body.rec .replay { display: none; }
@@ -55,10 +55,10 @@
   <h1>어떻게 하면 학생 팀이 구술 직후 구체적인 피드백을 받을 수 있을까?</h1>
   <p class="hypo"><b>가설 문장</b> 고등학생 팀은 구술 평가에서 말로 한 설명이 기록으로 남지 않고 교사 혼자 여러 팀을 들으며 기록해야 하기 때문에 팀마다 구체적인 피드백을 제때 받는 데 어려움을 겪고 있을 것이다.</p>
 </header>
-<div class="wrap"><div class="fit" id="fit"></div><p class="turn">휴대폰에서는 가로로 돌려 보거나 아래 영상 파일(MP4)을 전체 화면으로 보면 크게 보입니다.</p></div>
-<footer>동작관악 AI에듀테크 선도교사단 연수 2일차 · <a href="../../gallery/">웹앱 갤러리</a> · <a href="oral-paper.mp4">영상 파일(MP4)</a></footer>
+<div class="wrap"><div class="fit" id="fit"></div><p class="turn">휴대폰에서는 가로로 돌려 보면 크게 보입니다.</p></div>
+<footer>동작관악 AI에듀테크 선도교사단 연수 2일차 · <a href="../../gallery/">웹앱 갤러리</a></footer>
 
-<script src="../content/paper.js?v=20261030i"></script>
+<script src="../content/paper.js?v=20261030m"></script>
 <script>
 (function () {
   if (/[?&]rec\b/.test(location.search)) document.body.classList.add('rec');
@@ -106,13 +106,10 @@
       '<div class="bubble bq" style="left:600px;top:300px">?</div>' +
       '<div class="camf" style="left:18px;top:8px;width:900px;height:400px"></div>' +
       '<div class="mini m1" style="left:120px;top:190px"></div><div class="mini m2" style="left:430px;top:190px"></div><div class="mini m3" style="left:740px;top:190px"></div>' +
-      '<div class="aiw" style="left:960px;top:40px">' +
-        '<div class="bar"><i></i><i></i><i></i><span>AI 채팅</span></div>' +
-        '<div class="chat"><div class="th"></div><div class="th"></div><div class="th"></div><div class="pr">시작 프롬프트</div></div>' +
-        '<div class="app"><h5>2팀 피드백 초안</h5>' +
-          '<div class="fbk"><div><b>강점</b>그래프로 근거를 분명하게 설명한 부분</div><div><b>다음 단계</b>결론의 한계를 한 문장 더하기</div></div>' +
-          '<div class="acts"><span>교사가 고치기</span><span class="p">학생에게 보내기</span></div></div>' +
-      '</div>' +
+      // AI 채팅 창은 진행 화면과 같은 틀(paper.js aiWindowHTML): 보낸 종이 사진 세 장 → 답으로 온 웹앱의 첫 화면(종이 ①과 같은 화면)
+      PAPER.aiWindowHTML([sheet1, sheet2, sheet3],
+        '<h5>오늘의 팀 구술</h5><div class="sub2">팀마다 3~5분</div>' +
+        '<div class="rows">' + ['1팀', '2팀', '3팀', '4팀'].map(function (t) { return '<div><b>' + t + '</b><span>녹음</span></div>'; }).join('') + '</div>', 940, 22) +
       '<div class="flashw"></div><div class="tap"><i></i></div>' +
       '<button class="btn replay" type="button" data-replay>↺ 처음부터</button>' +
     '</div><ol class="steps">' + caps.map(function (c, i) { return '<li><b>' + (i + 1) + '</b>' + c + '</li>'; }).join('') + '</ol></div>';
@@ -190,13 +187,20 @@
       .then(function () {
         p.a(p.q('.camf'), [{ opacity: 1 }, { opacity: 0 }], { duration: 300 });
         p.a(p.q('.aiw'), [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 500 });
+        var tg = PAPER.flyTargets(p.q('.desk'));   // 사진이 AI 창의 축소본 자리로 날아간다
         p.qa('.mini').forEach(function (m, i) {
-          var dx = 1188 + i * 40 - parseFloat(m.style.left), dy = 86 - parseFloat(m.style.top);
-          p.a(m, [{ opacity: 1, transform: 'translate(0,0) rotate(' + (i - 1) * 5 + 'deg)' }, { opacity: 1, transform: 'translate(' + dx * .5 + 'px,' + (dy - 90) + 'px)', offset: .55 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.7)' }], { duration: 1000, delay: i * 120, easing: 'ease-in-out' });
+          var dx = (tg[i] ? tg[i][0] : 1188 + i * 40) - parseFloat(m.style.left), dy = (tg[i] ? tg[i][1] : 86) - parseFloat(m.style.top);
+          p.a(m, [{ opacity: 1, transform: 'translate(0,0) rotate(' + (i - 1) * 5 + 'deg)' }, { opacity: 1, transform: 'translate(' + dx * .5 + 'px,' + (dy - 90) + 'px)', offset: .55 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.8)' }], { duration: 1000, delay: i * 120, easing: 'ease-in-out' });
         });
-        return p.w(1200);
+        p.qa('.aiw .th').forEach(function (th, i) { p.a(th, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 900 + i * 120 }); });
+        return p.w(1300);
       })
-      .then(function () { p.qa('.aiw .app > *').forEach(function (x, i) { p.a(x, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: i * 300 }); }); return p.w(4500); })
+      .then(function () {
+        p.a(p.q('.aiw .pr'), [{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+        p.a(p.q('.aiw .msg.ai'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: 500 });
+        p.qa('.aiw .app > *').forEach(function (x, i) { p.a(x, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: 900 + i * 300 }); });
+        return p.w(5000);
+      })
       .then(function () { p.a(p.q('.desk'), [{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'none' }); return p.w(480); })
       .then(function () { p.root._scene.play(); });
   }
