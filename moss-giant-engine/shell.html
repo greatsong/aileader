@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>이끼의 거인 — 숲에서 깨어나다</title>
+<style>
+html,body{margin:0;height:100%;background:#0a0b0e;overflow:hidden;font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+canvas{display:block;width:min(100vw,calc(100vh*1920/1040));height:auto;aspect-ratio:1920/1040;background:#0a0b0e}
+#ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(ellipse at center,rgba(10,12,16,.25),rgba(10,12,16,.82));color:#f3ead2;text-align:center;padding:16px}
+#ui h1{margin:0;font-weight:500;font-size:clamp(24px,4.4vw,54px);letter-spacing:.3em;text-indent:.3em;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+#ui p{margin:0;font-size:clamp(12px,1.3vw,16px);letter-spacing:.14em;opacity:.8}
+#go{display:none;font:inherit;font-size:clamp(15px,1.6vw,20px);letter-spacing:.2em;color:#f3ead2;background:rgba(243,234,210,.08);border:1px solid rgba(243,234,210,.6);padding:14px 38px;border-radius:2px;cursor:pointer}
+#go:hover{background:rgba(243,234,210,.2)}
+#bar{position:fixed;left:0;bottom:0;height:2px;width:0;background:rgba(243,234,210,.35)}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+<div id="ui"><h1>이끼의 거인</h1><p id="msg">배경을 그리는 중…</p><button id="go">▶  재생</button><p>소리와 함께 감상하세요 · Space 일시정지 · F 전체화면 · M 음소거 · ←/→ 5초 이동</p></div>
+<div id="bar"></div>
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>
