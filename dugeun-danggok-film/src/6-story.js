@@ -65,7 +65,7 @@ function sceneCounsel(t, f, u) {
 }
 // the review: what was good, what could be better
 function sceneReview(t, f, u) {
-  const v = q2(u), x0 = 3040, ax = 3290, gy = x => pathY(x) - 2; cam.x = 3290 + u * 6; cam.y = 770; cam.z = 1.42; WARM = .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0);
+  const v = q2(u), x0 = 3040, ax = 3290, gy = x => pathY(x) - 2; cam.x = 3290 + u * 6; cam.y = 770; cam.z = 1.42; WARM = .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0, 1.3);
   const pr = clamp((v - 6) / 1.5, 0, 1); if (pr > 0) { const pts = []; for (let x = ax + 60; x <= ax + 60 + pr * 560; x += 30) pts.push([x, pathY(x) + 8]); goldLine(pts, 5); for (let i = 0; i < 6; i++) { const fx = ax + 110 + i * 90; if (fx < ax + 60 + pr * 560) flowerC(ctx, fx, pathY(fx) + 22, 1, i); } }
   sign(ctx, 3620, gy(3620) + 6, '다음 상담', popK(v, 6.7)); sign(ctx, 3850, gy(3850) + 6, '내년 개선', popK(v, 7.2));
   const e1 = clamp((v - 2.9) / .4, 0, 1), e2 = clamp((v - 5.6) / .4, 0, 1), got = (e1 >= 1 ? 3 : 0) + (e2 >= 1 ? 3 : 0);

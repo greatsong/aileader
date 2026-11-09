@@ -7,8 +7,8 @@ function tr(t, keys, ease) { if (t <= keys[0][0]) return keys[0][1]; for (let i 
 const hopA = (v, t0, d, h) => v > t0 && v < t0 + d ? Math.sin((v - t0) / d * Math.PI) * h : 0;
 const popK = (v, t0) => v < t0 ? 0 : v < t0 + .09 ? .6 : v < t0 + .18 ? 1.16 : v < t0 + .27 ? .95 : 1;
 const q2 = v => Math.floor(v * 12) / 12;
-function begin() { ST(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; sg.clearRect(0, 0, W / 8, H / 8); }
-function img(im, ox, oy, p, ax, ay) { const z = cam.z, ex = ax + (cam.x - ax) * p, ey = ay + (cam.y - ay) * p; ST(z, 0, 0, z, W / 2 - ex * z, H / 2 - ey * z); ctx.drawImage(im, ox, oy); ST(1, 0, 0, 1, 0, 0); }
+function begin() { ctx.imageSmoothingQuality = 'high'; ST(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; sg.clearRect(0, 0, W / 8, H / 8); }
+function img(im, ox, oy, p, ax, ay, sc) { const z = cam.z, ex = ax + (cam.x - ax) * p, ey = ay + (cam.y - ay) * p, k = sc || 1; ST(z / k, 0, 0, z / k, W / 2 - ex * z, H / 2 - ey * z); ctx.drawImage(im, ox * k, oy * k); ST(1, 0, 0, 1, 0, 0); }
 function mist(y0, h, a, speed, t, ww) { if (a <= .01) return; const z = cam.z, wd = 3400; ST(z, 0, 0, z, W / 2 - cam.x * z, H / 2 - cam.y * z); ctx.globalAlpha = a; const off = ((t * speed) % wd + wd) % wd; for (let x = -wd + off - 400; x < ww + 400; x += wd) ctx.drawImage(BG.mist, x, y0, wd, h); ctx.globalAlpha = 1; ST(1, 0, 0, 1, 0, 0); }
 function sglow(x, y, r, col, a, sy) { glow(sg, x / 8, y / 8, Math.max(1, r / 8), col, a, sy); }
 function wglow(wx, wy, r, col, a, sy) { const s = SCR(wx, wy); sglow(s[0], s[1], r * cam.z, col, a, sy); }
@@ -64,7 +64,7 @@ function sceneExt(t, f, u, mode) {
 }
 // ── teachers' room
 function deskBase(t, f, cx, cy, z, dusk) {
-  cam.x = cx; cam.y = cy; cam.z = z; WARM = dusk ? .5 : .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.int, 0, 0, 1, 0, 0);
+  cam.x = cx; cam.y = cy; cam.z = z; WARM = dusk ? .5 : .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.int, 0, 0, 1, 0, 0, BGS);
   if (dusk) { tintAll([96, 104, 170], .62, 'multiply'); }
 }
 // ───────────────────────── sound (synthesised) ─────────────────────────
@@ -72,8 +72,8 @@ let AC = null, OUT = null, NB = null, nodes = [];
 function env(g, when, pts) { g.setValueAtTime(pts[0][1], when + pts[0][0]); for (let i = 1; i < pts.length; i++) g.linearRampToValueAtTime(pts[i][1], when + pts[i][0]); }
 function nz(w, dur, type, f0, f1, q, pts) { const s = AC.createBufferSource(); s.buffer = NB; s.loop = true; const fl = AC.createBiquadFilter(); fl.type = type; fl.Q.value = q; fl.frequency.setValueAtTime(f0, w); fl.frequency.exponentialRampToValueAtTime(Math.max(20, f1), w + dur); const g = AC.createGain(); env(g.gain, w, pts); s.connect(fl).connect(g).connect(OUT); s.start(w); s.stop(w + dur + .1); nodes.push(s); }
 function tone(w, dur, type, f0, f1, pts) { const o = AC.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, w); o.frequency.exponentialRampToValueAtTime(Math.max(10, f1), w + dur); const g = AC.createGain(); env(g.gain, w, pts); o.connect(g).connect(OUT); o.start(w); o.stop(w + dur + .1); nodes.push(o); }
-const pluck = (w, fq, vol, d) => { tone(w, d || .9, 'triangle', fq, fq, [[0, 0], [.012, vol], [.18, vol * .35], [d || .9, 0]]); tone(w, .5, 'sine', fq * 2, fq * 2, [[0, 0], [.01, vol * .3], [.5, 0]]); };
-const pop = (w, fq) => tone(w, .14, 'sine', fq, fq * 1.6, [[0, 0], [.01, .07], [.14, 0]]);
+const pluck = (w, fq, vol, d) => { tone(w, d || .9, 'triangle', fq, fq, [[0, 0], [.022, vol], [.2, vol * .35], [d || .9, 0]]); tone(w, .5, 'sine', fq * 2, fq * 2, [[0, 0], [.022, vol * .3], [.5, 0]]); };
+const pop = (w, fq) => tone(w, .2, 'sine', fq, fq * 1.5, [[0, 0], [.03, .045], [.2, 0]]);
 const flut = (w, n) => { for (let i = 0; i < n; i++) nz(w + i * .09, .07, 'bandpass', 1800, 1100, 2, [[0, 0], [.015, .04], [.07, 0]]); };
 const pad = (w, dur, vol, fqs) => { for (const fq of fqs) { tone(w, dur, 'sine', fq, fq, [[0, 0], [dur * .3, vol], [dur * .75, vol], [dur, 0]]); tone(w, dur, 'triangle', fq * 1.003, fq * 1.003, [[0, 0], [dur * .4, vol * .25], [dur, 0]]); } };
 // ───────────────────────── player ─────────────────────────
@@ -83,7 +83,7 @@ function nowT() { return playing ? base + (AC ? AC.currentTime - T0 : (performan
 function loop() {
   requestAnimationFrame(loop); if (!playing) return; const t = nowT(), f = Math.floor(t * FPS);
   if (t >= END) { playing = false; base = 0; ui.style.display = 'flex'; btn.textContent = '↻  다시 보기'; return; }
-  if (f !== lastF) { if (lastF >= 0 && f - lastF > 1 && f - lastF < 12) slow += f - lastF - 1; else slow = Math.max(0, slow - .25); if (slow > 30 && RS > .5) { setRS(RS > .8 ? .8 : RS > .66 ? .66 : .5); slow = 0; } lastF = f; render(t); bar.style.width = (t / END * 100) + '%'; }
+  if (f !== lastF) { if (lastF >= 0 && f - lastF > 1 && f - lastF < 12) slow += f - lastF - 1; else slow = Math.max(0, slow - .25); if (slow > 70 && RS > .7) { setRS(.8 > RS - .01 ? .7 : .8); slow = 0; } lastF = f; render(t); bar.style.width = (t / END * 100) + '%'; }
 }
 function play(from) {
   base = from || 0; lastF = -1;
@@ -102,7 +102,7 @@ window.__render = t => { render(t); };
 setTimeout(() => {
   paintExt(); paintInt(); paintMeadow(); mkGrain();
   window.__bench = () => { render(56); const a = performance.now(); for (let i = 1; i <= 5; i++) { render(56 + i / 24); ctx.getImageData(0, 0, 1, 1); } return (performance.now() - a) / 5; };
-  { const q = new URLSearchParams(location.search).get('rs'); if (q) setRS(+q); else { const ms = window.__bench(); if (ms > 38) setRS(ms > 95 ? .5 : ms > 60 ? .66 : .8); } render(8.6); }
+  { const q = new URLSearchParams(location.search).get('rs'); if (q) setRS(+q); else { window.__bench(); const ms = window.__bench(); if (ms > 80) setRS(.8); } render(8.6); }
   msg.style.display = 'none'; btn.style.display = 'inline-block';
   const q = new URLSearchParams(location.search).get('t'); if (q !== null) { ui.style.display = 'none'; render(+q); }
   window.__ready = true; loop();

@@ -1,5 +1,5 @@
 // ───────────────────────── painted backgrounds: school hill, teachers' room, meadow ─────────────────────────
-const BG = {};
+const BG = {}, BGS = 1.5;   // interior and meadow are painted larger than they are shown, so close shots stay crisp
 const EW = 2400, EH = 1900, IW = 3200, IH = 1040, MW = 6000, MH = 1300, MGY = 905;
 const pathY = x => MGY + 14 * Math.sin(x / 260);
 function wall(g, x, y, w, h, col, R, n) { g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.fillStyle = rgb(col); g.fillRect(x, y, w, h); const m = Math.min(1, Math.min(w, h) / 60); for (let i = 0; i < (n || w * h / 900); i++) brush(g, x + R() * w, y + R() * h, (20 + R() * 50) * m, (5 + R() * 9) * m, Math.PI / 2 + (R() - .5) * .3, jit(col, R, 9), .5, R); g.restore(); }
@@ -11,8 +11,8 @@ function tree(g, x, base, h, w, R, pal, tp) {
   for (let k = 0; k < 3; k++) { const d = k - 1; limb(g, x, base - h * .5, x + d * h * .22, base - h * .78, w * .35, tp[0], 10); }
   for (let i = 0; i < 16; i++) { const a = R() * TAU, r = Math.sqrt(R()); clump(g, x + Math.cos(a) * h * .36 * r, base - h * .78 + Math.sin(a) * h * .26 * r, h * (.12 + R() * .1), h * (.08 + R() * .07), pal, R, Math.max(5, h * .022), 1.2, 1.1); }
 }
-function skyPaint(w, h, stops, sun, clouds, R, cp) {
-  const c = mkCanvas(w, h), g = c.getContext('2d'); vgrad(g, w, h, stops);
+function skyPaint(w, h, stops, sun, clouds, R, cp, sc) {
+  const c = mkCanvas(w * (sc || 1), h * (sc || 1)), g = c.getContext('2d'); if (sc) g.scale(sc, sc); vgrad(g, w, h, stops);
   for (let i = 0; i < 1100; i++) { const y = R() * h, t = y / h; let col = stops[0][1]; for (let k = 1; k < stops.length; k++) if (t >= stops[k - 1][0] && t <= stops[k][0]) col = mix(stops[k - 1][1], stops[k][1], (t - stops[k - 1][0]) / (stops[k][0] - stops[k - 1][0])); brush(g, R() * w, y, 160 + R() * 320, 16 + R() * 34, (R() - .5) * .16, jit(col, R, 8), .3, R); }
   glow(g, sun[0], sun[1], 1200, sun[2], .7); glow(g, sun[0], sun[1], 420, [255, 250, 226], .85); glow(g, sun[0], sun[1], 110, [255, 255, 246], 1);
   for (let i = 0; i < 70; i++) brush(g, R() * w, R() * h * .5, 200 + R() * 400, 6 + R() * 10, -.1 + (R() - .5) * .1, [255, 246, 230], .22, R);
@@ -70,7 +70,7 @@ function paintExt() {
   BG.extFG = f;
 }
 function paintInt() {
-  const R = rng(27182), c = mkCanvas(IW, IH), g = c.getContext('2d');
+  const R = rng(27182), c = mkCanvas(IW * BGS, IH * BGS), g = c.getContext('2d'); g.scale(BGS, BGS);
   wall(g, 0, 0, IW, 540, [230, 218, 190], R, 2600); wall(g, 0, 520, IW, 200, [156, 116, 84], R, 1500);
   for (let x = 0; x < IW; x += 64) { g.fillStyle = 'rgba(90,60,44,.35)'; g.fillRect(x + (R() - .5) * 4, 524, 3, 196); } g.fillStyle = 'rgb(120,86,62)'; g.fillRect(0, 512, IW, 14);
   wall(g, 0, 720, IW, 320, [124, 100, 84], R, 1400);
@@ -103,7 +103,7 @@ function paintInt() {
 }
 function paintMeadow() {
   const R = rng(16180);
-  let c = skyPaint(MW, MH, [[0, [116, 172, 218]], [.3, [170, 208, 230]], [.5, [226, 236, 232]], [1, [240, 240, 224]]], [5200, 520, [255, 250, 226]], [[500, 300, 620, 280, 0], [1700, 220, 480, 200, 0], [2900, 340, 700, 300, 0], [4100, 240, 520, 220, 0], [5500, 180, 420, 170, 0], [1100, 470, 300, 110, 0], [3500, 500, 320, 110, 0]], R, [[[156, 178, 212], [226, 228, 232], [255, 252, 244], [186, 200, 220]]]);
+  let c = skyPaint(MW, MH, [[0, [116, 172, 218]], [.3, [170, 208, 230]], [.5, [226, 236, 232]], [1, [240, 240, 224]]], [5200, 520, [255, 250, 226]], [[500, 300, 620, 280, 0], [1700, 220, 480, 200, 0], [2900, 340, 700, 300, 0], [4100, 240, 520, 220, 0], [5500, 180, 420, 170, 0], [1100, 470, 300, 110, 0], [3500, 500, 320, 110, 0]], R, [[[156, 178, 212], [226, 228, 232], [255, 252, 244], [186, 200, 220]]], 1.3);
   let g = c.getContext('2d');
   for (const [by, col, hh, ph] of [[640, [150, 180, 206], 150, 2], [680, [126, 164, 170], 90, 5]]) { g.fillStyle = rgb(col); g.beginPath(); g.moveTo(0, MH); for (let x = 0; x <= MW; x += 20) g.lineTo(x, by - hh * (.3 + .7 * Math.abs(Math.sin(x * .0021 + ph) * Math.cos(x * .0009 + ph * 2)))); g.lineTo(MW, MH); g.fill(); for (let i = 0; i < 700; i++) brush(g, R() * MW, by - R() * hh * .6 + 30, 40 + R() * 60, 6 + R() * 8, .4 + R() * .4, jit(mix(col, [236, 236, 226], R() * .5), R, 6), .35, R); }
   // tiny school far away

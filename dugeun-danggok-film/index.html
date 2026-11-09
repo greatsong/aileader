@@ -188,7 +188,7 @@ function paintCloud(g, cx, cy, w, h, R, pal) {
 }
 
 // ───────────────────────── painted backgrounds: school hill, teachers' room, meadow ─────────────────────────
-const BG = {};
+const BG = {}, BGS = 1.5;   // interior and meadow are painted larger than they are shown, so close shots stay crisp
 const EW = 2400, EH = 1900, IW = 3200, IH = 1040, MW = 6000, MH = 1300, MGY = 905;
 const pathY = x => MGY + 14 * Math.sin(x / 260);
 function wall(g, x, y, w, h, col, R, n) { g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.fillStyle = rgb(col); g.fillRect(x, y, w, h); const m = Math.min(1, Math.min(w, h) / 60); for (let i = 0; i < (n || w * h / 900); i++) brush(g, x + R() * w, y + R() * h, (20 + R() * 50) * m, (5 + R() * 9) * m, Math.PI / 2 + (R() - .5) * .3, jit(col, R, 9), .5, R); g.restore(); }
@@ -200,8 +200,8 @@ function tree(g, x, base, h, w, R, pal, tp) {
   for (let k = 0; k < 3; k++) { const d = k - 1; limb(g, x, base - h * .5, x + d * h * .22, base - h * .78, w * .35, tp[0], 10); }
   for (let i = 0; i < 16; i++) { const a = R() * TAU, r = Math.sqrt(R()); clump(g, x + Math.cos(a) * h * .36 * r, base - h * .78 + Math.sin(a) * h * .26 * r, h * (.12 + R() * .1), h * (.08 + R() * .07), pal, R, Math.max(5, h * .022), 1.2, 1.1); }
 }
-function skyPaint(w, h, stops, sun, clouds, R, cp) {
-  const c = mkCanvas(w, h), g = c.getContext('2d'); vgrad(g, w, h, stops);
+function skyPaint(w, h, stops, sun, clouds, R, cp, sc) {
+  const c = mkCanvas(w * (sc || 1), h * (sc || 1)), g = c.getContext('2d'); if (sc) g.scale(sc, sc); vgrad(g, w, h, stops);
   for (let i = 0; i < 1100; i++) { const y = R() * h, t = y / h; let col = stops[0][1]; for (let k = 1; k < stops.length; k++) if (t >= stops[k - 1][0] && t <= stops[k][0]) col = mix(stops[k - 1][1], stops[k][1], (t - stops[k - 1][0]) / (stops[k][0] - stops[k - 1][0])); brush(g, R() * w, y, 160 + R() * 320, 16 + R() * 34, (R() - .5) * .16, jit(col, R, 8), .3, R); }
   glow(g, sun[0], sun[1], 1200, sun[2], .7); glow(g, sun[0], sun[1], 420, [255, 250, 226], .85); glow(g, sun[0], sun[1], 110, [255, 255, 246], 1);
   for (let i = 0; i < 70; i++) brush(g, R() * w, R() * h * .5, 200 + R() * 400, 6 + R() * 10, -.1 + (R() - .5) * .1, [255, 246, 230], .22, R);
@@ -259,7 +259,7 @@ function paintExt() {
   BG.extFG = f;
 }
 function paintInt() {
-  const R = rng(27182), c = mkCanvas(IW, IH), g = c.getContext('2d');
+  const R = rng(27182), c = mkCanvas(IW * BGS, IH * BGS), g = c.getContext('2d'); g.scale(BGS, BGS);
   wall(g, 0, 0, IW, 540, [230, 218, 190], R, 2600); wall(g, 0, 520, IW, 200, [156, 116, 84], R, 1500);
   for (let x = 0; x < IW; x += 64) { g.fillStyle = 'rgba(90,60,44,.35)'; g.fillRect(x + (R() - .5) * 4, 524, 3, 196); } g.fillStyle = 'rgb(120,86,62)'; g.fillRect(0, 512, IW, 14);
   wall(g, 0, 720, IW, 320, [124, 100, 84], R, 1400);
@@ -292,7 +292,7 @@ function paintInt() {
 }
 function paintMeadow() {
   const R = rng(16180);
-  let c = skyPaint(MW, MH, [[0, [116, 172, 218]], [.3, [170, 208, 230]], [.5, [226, 236, 232]], [1, [240, 240, 224]]], [5200, 520, [255, 250, 226]], [[500, 300, 620, 280, 0], [1700, 220, 480, 200, 0], [2900, 340, 700, 300, 0], [4100, 240, 520, 220, 0], [5500, 180, 420, 170, 0], [1100, 470, 300, 110, 0], [3500, 500, 320, 110, 0]], R, [[[156, 178, 212], [226, 228, 232], [255, 252, 244], [186, 200, 220]]]);
+  let c = skyPaint(MW, MH, [[0, [116, 172, 218]], [.3, [170, 208, 230]], [.5, [226, 236, 232]], [1, [240, 240, 224]]], [5200, 520, [255, 250, 226]], [[500, 300, 620, 280, 0], [1700, 220, 480, 200, 0], [2900, 340, 700, 300, 0], [4100, 240, 520, 220, 0], [5500, 180, 420, 170, 0], [1100, 470, 300, 110, 0], [3500, 500, 320, 110, 0]], R, [[[156, 178, 212], [226, 228, 232], [255, 252, 244], [186, 200, 220]]], 1.3);
   let g = c.getContext('2d');
   for (const [by, col, hh, ph] of [[640, [150, 180, 206], 150, 2], [680, [126, 164, 170], 90, 5]]) { g.fillStyle = rgb(col); g.beginPath(); g.moveTo(0, MH); for (let x = 0; x <= MW; x += 20) g.lineTo(x, by - hh * (.3 + .7 * Math.abs(Math.sin(x * .0021 + ph) * Math.cos(x * .0009 + ph * 2)))); g.lineTo(MW, MH); g.fill(); for (let i = 0; i < 700; i++) brush(g, R() * MW, by - R() * hh * .6 + 30, 40 + R() * 60, 6 + R() * 8, .4 + R() * .4, jit(mix(col, [236, 236, 226], R() * .5), R, 6), .35, R); }
   // tiny school far away
@@ -443,8 +443,8 @@ function tr(t, keys, ease) { if (t <= keys[0][0]) return keys[0][1]; for (let i 
 const hopA = (v, t0, d, h) => v > t0 && v < t0 + d ? Math.sin((v - t0) / d * Math.PI) * h : 0;
 const popK = (v, t0) => v < t0 ? 0 : v < t0 + .09 ? .6 : v < t0 + .18 ? 1.16 : v < t0 + .27 ? .95 : 1;
 const q2 = v => Math.floor(v * 12) / 12;
-function begin() { ST(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; sg.clearRect(0, 0, W / 8, H / 8); }
-function img(im, ox, oy, p, ax, ay) { const z = cam.z, ex = ax + (cam.x - ax) * p, ey = ay + (cam.y - ay) * p; ST(z, 0, 0, z, W / 2 - ex * z, H / 2 - ey * z); ctx.drawImage(im, ox, oy); ST(1, 0, 0, 1, 0, 0); }
+function begin() { ctx.imageSmoothingQuality = 'high'; ST(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; sg.clearRect(0, 0, W / 8, H / 8); }
+function img(im, ox, oy, p, ax, ay, sc) { const z = cam.z, ex = ax + (cam.x - ax) * p, ey = ay + (cam.y - ay) * p, k = sc || 1; ST(z / k, 0, 0, z / k, W / 2 - ex * z, H / 2 - ey * z); ctx.drawImage(im, ox * k, oy * k); ST(1, 0, 0, 1, 0, 0); }
 function mist(y0, h, a, speed, t, ww) { if (a <= .01) return; const z = cam.z, wd = 3400; ST(z, 0, 0, z, W / 2 - cam.x * z, H / 2 - cam.y * z); ctx.globalAlpha = a; const off = ((t * speed) % wd + wd) % wd; for (let x = -wd + off - 400; x < ww + 400; x += wd) ctx.drawImage(BG.mist, x, y0, wd, h); ctx.globalAlpha = 1; ST(1, 0, 0, 1, 0, 0); }
 function sglow(x, y, r, col, a, sy) { glow(sg, x / 8, y / 8, Math.max(1, r / 8), col, a, sy); }
 function wglow(wx, wy, r, col, a, sy) { const s = SCR(wx, wy); sglow(s[0], s[1], r * cam.z, col, a, sy); }
@@ -500,7 +500,7 @@ function sceneExt(t, f, u, mode) {
 }
 // ── teachers' room
 function deskBase(t, f, cx, cy, z, dusk) {
-  cam.x = cx; cam.y = cy; cam.z = z; WARM = dusk ? .5 : .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.int, 0, 0, 1, 0, 0);
+  cam.x = cx; cam.y = cy; cam.z = z; WARM = dusk ? .5 : .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.int, 0, 0, 1, 0, 0, BGS);
   if (dusk) { tintAll([96, 104, 170], .62, 'multiply'); }
 }
 // ───────────────────────── sound (synthesised) ─────────────────────────
@@ -508,8 +508,8 @@ let AC = null, OUT = null, NB = null, nodes = [];
 function env(g, when, pts) { g.setValueAtTime(pts[0][1], when + pts[0][0]); for (let i = 1; i < pts.length; i++) g.linearRampToValueAtTime(pts[i][1], when + pts[i][0]); }
 function nz(w, dur, type, f0, f1, q, pts) { const s = AC.createBufferSource(); s.buffer = NB; s.loop = true; const fl = AC.createBiquadFilter(); fl.type = type; fl.Q.value = q; fl.frequency.setValueAtTime(f0, w); fl.frequency.exponentialRampToValueAtTime(Math.max(20, f1), w + dur); const g = AC.createGain(); env(g.gain, w, pts); s.connect(fl).connect(g).connect(OUT); s.start(w); s.stop(w + dur + .1); nodes.push(s); }
 function tone(w, dur, type, f0, f1, pts) { const o = AC.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, w); o.frequency.exponentialRampToValueAtTime(Math.max(10, f1), w + dur); const g = AC.createGain(); env(g.gain, w, pts); o.connect(g).connect(OUT); o.start(w); o.stop(w + dur + .1); nodes.push(o); }
-const pluck = (w, fq, vol, d) => { tone(w, d || .9, 'triangle', fq, fq, [[0, 0], [.012, vol], [.18, vol * .35], [d || .9, 0]]); tone(w, .5, 'sine', fq * 2, fq * 2, [[0, 0], [.01, vol * .3], [.5, 0]]); };
-const pop = (w, fq) => tone(w, .14, 'sine', fq, fq * 1.6, [[0, 0], [.01, .07], [.14, 0]]);
+const pluck = (w, fq, vol, d) => { tone(w, d || .9, 'triangle', fq, fq, [[0, 0], [.022, vol], [.2, vol * .35], [d || .9, 0]]); tone(w, .5, 'sine', fq * 2, fq * 2, [[0, 0], [.022, vol * .3], [.5, 0]]); };
+const pop = (w, fq) => tone(w, .2, 'sine', fq, fq * 1.5, [[0, 0], [.03, .045], [.2, 0]]);
 const flut = (w, n) => { for (let i = 0; i < n; i++) nz(w + i * .09, .07, 'bandpass', 1800, 1100, 2, [[0, 0], [.015, .04], [.07, 0]]); };
 const pad = (w, dur, vol, fqs) => { for (const fq of fqs) { tone(w, dur, 'sine', fq, fq, [[0, 0], [dur * .3, vol], [dur * .75, vol], [dur, 0]]); tone(w, dur, 'triangle', fq * 1.003, fq * 1.003, [[0, 0], [dur * .4, vol * .25], [dur, 0]]); } };
 // ───────────────────────── player ─────────────────────────
@@ -519,7 +519,7 @@ function nowT() { return playing ? base + (AC ? AC.currentTime - T0 : (performan
 function loop() {
   requestAnimationFrame(loop); if (!playing) return; const t = nowT(), f = Math.floor(t * FPS);
   if (t >= END) { playing = false; base = 0; ui.style.display = 'flex'; btn.textContent = '↻  다시 보기'; return; }
-  if (f !== lastF) { if (lastF >= 0 && f - lastF > 1 && f - lastF < 12) slow += f - lastF - 1; else slow = Math.max(0, slow - .25); if (slow > 30 && RS > .5) { setRS(RS > .8 ? .8 : RS > .66 ? .66 : .5); slow = 0; } lastF = f; render(t); bar.style.width = (t / END * 100) + '%'; }
+  if (f !== lastF) { if (lastF >= 0 && f - lastF > 1 && f - lastF < 12) slow += f - lastF - 1; else slow = Math.max(0, slow - .25); if (slow > 70 && RS > .7) { setRS(.8 > RS - .01 ? .7 : .8); slow = 0; } lastF = f; render(t); bar.style.width = (t / END * 100) + '%'; }
 }
 function play(from) {
   base = from || 0; lastF = -1;
@@ -538,7 +538,7 @@ window.__render = t => { render(t); };
 setTimeout(() => {
   paintExt(); paintInt(); paintMeadow(); mkGrain();
   window.__bench = () => { render(56); const a = performance.now(); for (let i = 1; i <= 5; i++) { render(56 + i / 24); ctx.getImageData(0, 0, 1, 1); } return (performance.now() - a) / 5; };
-  { const q = new URLSearchParams(location.search).get('rs'); if (q) setRS(+q); else { const ms = window.__bench(); if (ms > 38) setRS(ms > 95 ? .5 : ms > 60 ? .66 : .8); } render(8.6); }
+  { const q = new URLSearchParams(location.search).get('rs'); if (q) setRS(+q); else { window.__bench(); const ms = window.__bench(); if (ms > 80) setRS(.8); } render(8.6); }
   msg.style.display = 'none'; btn.style.display = 'inline-block';
   const q = new URLSearchParams(location.search).get('t'); if (q !== null) { ui.style.display = 'none'; render(+q); }
   window.__ready = true; loop();
@@ -611,7 +611,7 @@ function sceneCounsel(t, f, u) {
 }
 // the review: what was good, what could be better
 function sceneReview(t, f, u) {
-  const v = q2(u), x0 = 3040, ax = 3290, gy = x => pathY(x) - 2; cam.x = 3290 + u * 6; cam.y = 770; cam.z = 1.42; WARM = .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0);
+  const v = q2(u), x0 = 3040, ax = 3290, gy = x => pathY(x) - 2; cam.x = 3290 + u * 6; cam.y = 770; cam.z = 1.42; WARM = .1; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0, 1.3);
   const pr = clamp((v - 6) / 1.5, 0, 1); if (pr > 0) { const pts = []; for (let x = ax + 60; x <= ax + 60 + pr * 560; x += 30) pts.push([x, pathY(x) + 8]); goldLine(pts, 5); for (let i = 0; i < 6; i++) { const fx = ax + 110 + i * 90; if (fx < ax + 60 + pr * 560) flowerC(ctx, fx, pathY(fx) + 22, 1, i); } }
   sign(ctx, 3620, gy(3620) + 6, '다음 상담', popK(v, 6.7)); sign(ctx, 3850, gy(3850) + 6, '내년 개선', popK(v, 7.2));
   const e1 = clamp((v - 2.9) / .4, 0, 1), e2 = clamp((v - 5.6) / .4, 0, 1), got = (e1 >= 1 ? 3 : 0) + (e2 >= 1 ? 3 : 0);
@@ -712,7 +712,7 @@ function sceneTalk2(t, f, u) {
 }
 // year-end counselling: what to put into the record, in and out with one click
 function sceneYear(t, f, u) {
-  const v = q2(u), px = 1640, py = 316, items = [['융합 프로젝트', 1195, 3.4, 99, 0], ['과학 탐구', 1295, 4.7, 99, 2], ['독서 토론', 1395, -1, 6.1, 4]];
+  const v = q2(u), px = 1640, py = 316, items = [['융합 프로젝트', 1195, 3.4, 99, 0], ['독서 토론', 1295, 4.7, 99, 2], ['생명존중 예방교육', 1372, -1, 6.1, 4]];
   deskBase(t, f, 1380 + u * 3, 470, 1.36); tintAll([255, 180, 110], .16);
   const isIn = it => v >= it[2] + .5 && v < it[3], n = items.filter(isIn).length;
   sheet(ctx, px, py, 210, 280, .02, { lines: 3, rows: 10, seed: 5, head: [190, 170, 236], label: '생기부', lpx: 24, labelUp: true });
@@ -725,7 +725,7 @@ function sceneYear(t, f, u) {
   for (const [t0, x, y, ch] of [[3.4, 1195, Yd - 150, '+'], [4.7, 1295, Yd - 150, '+'], [6.1, px - 130, py + 10, '−']]) if (v >= t0 && v < t0 + .7) { mark(x, y, ch, popK(v, t0), 'rgb(255,226,130)'); sparkle(ctx, x + 44, y - 20, 18 * popK(v, t0), 3); }
   const q1 = v > .5 && v < 3.1, a1 = v > 2.9 && v < 4.5, q2b = v > 5.4 && v < 7.2, end = v > 7.8;
   actor('dugeun', 1070, Yd, Sd, { look: a1 ? [.7, .2] : v > 4.5 && v < 5.4 ? [1, -.6] : [.9, -.3], expr: a1 || end || (v > 4.6 && v < 5.4) ? 'joy' : 'smile', aR: a1 || (v > 4.5 && v < 5.2) ? 2 : end ? 2.2 : .2, aL: end ? 2.2 : .2, sprout: a1 ? 1 : Math.sin(v * 3) * .4, hop: hopA(v, 3.4, .3, 20) + hopA(v, 4.7, .3, 20) + hopA(v, 7.9, .4, 28) + hopA(v, 8.6, .4, 20) });
-  actor('doran', 1500, Yd, Sd, { look: q1 ? [-.8, -.1] : q2b ? [.6, -.6] : [-.7, 0], expr: end || q2b ? 'joy' : 'smile', aL: q1 ? 1.7 : .2, aR: q2b ? 2.2 : end ? 2.2 : .2, lean: q1 ? -.08 : 0, hop: hopA(v, 6.1, .3, 18) + hopA(v, 8, .4, 24) });
+  actor('doran', 1545, Yd, Sd, { look: q1 ? [-.8, -.1] : q2b ? [.6, -.6] : [-.7, 0], expr: end || q2b ? 'joy' : 'smile', aL: q1 ? 1.7 : .2, aR: q2b ? 2.2 : end ? 2.2 : .2, lean: q1 ? -.08 : 0, hop: hopA(v, 6.1, .3, 18) + hopA(v, 8, .4, 24) });
   say(ctx, 1400, 372, ['진로에는 어떤 활동을', '더 담으면 좋을까?'], [222, 238, 250], q1 ? popK(v, .5) : 0, -1);
   say(ctx, 1100, 392, ['융합 프로젝트요!'], [255, 250, 232], a1 ? popK(v, 2.9) : 0, 1);
   say(ctx, 1430, 388, ['이건 빼도 되겠다'], [222, 238, 250], q2b ? popK(v, 5.4) : 0, -1);
@@ -733,7 +733,7 @@ function sceneYear(t, f, u) {
 }
 // everyone's feedback becomes next year's plan
 function scenePlan(t, f, u) {
-  const v = q2(u), G = 906, soil = [5090, 912]; cam.x = 5010 - 70 * (1 - sstep(u / 10)); cam.y = 690; cam.z = 1.25; WARM = .15; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0);
+  const v = q2(u), G = 906, soil = [5090, 912]; cam.x = 5010 - 70 * (1 - sstep(u / 10)); cam.y = 690; cam.z = 1.25; WARM = .15; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0, 1.3);
   const cast = [['doran', 4370], ['mongsil', 4540], ['dugeun', 4715], ['ttukttak', 4895]], done = v > 9.4;
   // student reviews (leaves) and teacher notes (pages) gather at the roots
   for (let i = 0; i < 6; i++) { const t0 = .3 + i * .32, e = clamp((v - t0) / 1.5, 0, 1); if (e <= 0 || v > 4.9) continue; const fromT = i % 2, sx = fromT ? (i % 4 === 1 ? 4420 : 4930) : 4760, x = lerp(sx, soil[0] + (i - 2.5) * 14, e) + Math.sin(e * 9 + i) * 30 * (1 - e), y = lerp(650, soil[1] - 8, e * e) - Math.sin(e * Math.PI) * (150 + i * 14), s = SCR(x, y); if (fromT) sheet(ctx, x, y, 44, 54, e < 1 ? Math.sin(e * 10 + i) : .2, { head: FLY[i % 5], lines: 2, seed: i, lw: .6, fore: e < 1 ? .4 + .6 * Math.abs(Math.cos(e * 9)) : .35 }); else drawLeaf(ctx, s[0], s[1], 24 * cam.z, e < 1 ? Math.sin(e * 12 + i) * 1.2 : .15 + i * .3, e < 1 ? Math.floor(v * 8) + i : 0, [[236, 196, 96], [196, 216, 96], [240, 160, 120]][(i / 2) | 0]); }
@@ -759,10 +759,14 @@ function endTitle(u) {
   if (v > te) for (let i = 0; i < 7; i++) { const a = (v - te) * .5 + i * .9, x = 360 + i * 200 + Math.sin(a * 2 + i) * 20, y = 400 - ((a * 60 + i * 37) % 300), k = popK(v, te + i * .12) * (1 - ((a * 60 + i * 37) % 300) / 300); if (k <= 0) continue; ctx.fillStyle = `rgba(255,150,150,${.85 * k})`; ctx.save(); ctx.translate(x, y); ctx.scale(k * .9, k * .9); ctx.beginPath(); ctx.moveTo(0, 20); ctx.bezierCurveTo(-34, -4, -14, -30, 0, -10); ctx.bezierCurveTo(14, -30, 34, -4, 0, 20); ctx.fill(); ctx.restore(); }
   const fd = ramp(u, 17.4, 19.4); if (fd > 0) { ctx.fillStyle = `rgba(255,242,216,${fd})`; ctx.fillRect(0, 0, W, H); }
 }
+const snapC = mkCanvas(W, H), snapG = snapC.getContext('2d'); let lastId = null, lastRF = -9, snapAt = -9;
 function render(t) {
   t = clamp(t, 0, END); const f = Math.floor(t * FPS + 1e-6), tf = f / FPS; let sh = SHOTS[0]; for (const s of SHOTS) if (s[0] <= tf + 1e-9) sh = s; const u = tf - sh[0], id = sh[1];
+  // soft dissolve from the last frame of the previous shot
+  if (lastId && id !== lastId && f === lastRF + 1) { if (snapC.width !== cv.width) { snapC.width = cv.width; snapC.height = cv.height; } snapG.drawImage(cv, 0, 0); snapAt = sh[0]; } else if (f !== lastRF + 1 && f !== lastRF) snapAt = -9; lastId = id; lastRF = f;
   ({ dawn: () => sceneExt(tf, f, u, 'dawn'), final: () => sceneExt(tf, f, u, 'final'), c1: () => sceneTalk1(tf, f, u), c2: () => sceneBusy(tf, f, u), pick: () => scenePick(tf, f, u), c3: () => sceneCounsel(tf, f, u), auto: () => sceneAuto(tf, f, u), class: () => sceneClass(tf, f, u), review: () => sceneReview(tf, f, u * 8 / 7), record: () => sceneRecord(tf, f, u), c4: () => sceneTalk2(tf, f, u), year: () => sceneYear(tf, f, u), plan: () => scenePlan(tf, f, u) })[id]();
-  ST(1, 0, 0, 1, 0, 0); subs(tf);
+  ST(1, 0, 0, 1, 0, 0); const dd = tf - snapAt; if (dd >= 0 && dd < .58) { ctx.globalAlpha = 1 - sstep(dd / .58); ctx.drawImage(snapC, 0, 0, W, H); ctx.globalAlpha = 1; }
+  subs(tf);
 }
 // ── music: bright, bouncy, hopeful (D major, about 100 bpm)
 function audioSchedule(t0) {
@@ -770,11 +774,10 @@ function audioSchedule(t0) {
   const D4 = 293.66, E4 = 329.63, F4 = 369.99, G4 = 392, A4 = 440, B4 = 493.88, C5 = 554.37, D5 = 587.33, E5 = 659.25, F5 = 739.99, G5 = 783.99, A5 = 880, B5 = 987.77, D6 = 1174.66, B = .3;
   const melA = [D5, 0, F5, A5, 0, F5, A5, B5, A5, 0, F5, D5, 0, E5, F5, 0, G5, 0, B5, D6, 0, B5, A5, G5, F5, 0, A5, E5, 0, 0, E5, F5], melB = [A5, 0, A5, B5, A5, 0, F5, 0, G5, 0, E5, F5, 0, D5, 0, 0, B4, 0, D5, G5, 0, B5, A5, G5, A5, 0, 0, E5, F5, G5, A5, 0];
   const CH = { D: [146.83, 220, D4, F4], G: [98, 246.94, D4, G4], A: [110, 220, 277.18, E4], Bm: [123.47, 246.94, D4, F4] }, prog = ['D', 'D', 'G', 'A', 'D', 'Bm', 'G', 'A'];
-  const kick = (w, v) => tone(w, .13, 'sine', 110, 46, [[0, 0], [.008, v], [.13, 0]]), hat = (w, v) => nz(w, .04, 'highpass', 7000, 9000, .7, [[0, 0], [.004, v], [.04, 0]]), snap = (w, v) => nz(w, .07, 'bandpass', 2000, 1500, 1.5, [[0, 0], [.005, v], [.07, 0]]);
+  const kick = (w, v) => tone(w, .2, 'sine', 92, 50, [[0, 0], [.03, v], [.2, 0]]);
   const groove = (ta, tb, lvl) => { for (let i = 0; ta + i * B < tb; i++) { const t = ta + i * B, bar = Math.floor(i / 8) % 8, pos = i % 8, c = CH[prog[bar]]; at(t, w => {
     const n = (bar < 4 ? melA : melB)[(bar % 4) * 8 + pos]; if (n && lvl > 0) { pluck(w, n, .05 * lvl, .55); if (lvl > 1.2) pluck(w, n / 2, .025, .5); }
-    if (pos === 0 || pos === 4) { pluck(w, c[0], .085, .5); if (lvl > .5) kick(w, .16); } if (pos === 2 || pos === 6) { pluck(w, c[2], .028, .22); pluck(w, c[3], .028, .22); if (lvl > .5) snap(w, .03); } if (pos === 7 && bar % 2) pluck(w, c[1], .04, .25);
-    if (lvl > .5) hat(w, pos % 2 ? .02 : .011); }); } };
+    if (pos === 0 || pos === 4) { pluck(w, c[0], .08, .6); if (lvl > .5) kick(w, .09); } if (pos === 2 || pos === 6) { pluck(w, c[2], .026, .4); pluck(w, c[3], .026, .4); } if (pos === 7 && bar % 2) pluck(w, c[1], .035, .4); }); } };
   // opening: bright arpeggio over a warm pad
   at(0, w => pad(w, 9, .03, [146.83, 220, F4, A4])); [D5, F5, A5, D6, A5, F5, G5, B5, D6, B5, A5, F5, E5, A5].forEach((n, i) => at(1.6 + i * .45, w => pluck(w, n, .05, 1.1))); at(5.9, w => pop(w, 520));
   // before: a lighter, slightly wistful vamp without drums

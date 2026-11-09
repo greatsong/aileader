@@ -86,7 +86,7 @@ function sceneTalk2(t, f, u) {
 }
 // year-end counselling: what to put into the record, in and out with one click
 function sceneYear(t, f, u) {
-  const v = q2(u), px = 1640, py = 316, items = [['융합 프로젝트', 1195, 3.4, 99, 0], ['과학 탐구', 1295, 4.7, 99, 2], ['독서 토론', 1395, -1, 6.1, 4]];
+  const v = q2(u), px = 1640, py = 316, items = [['융합 프로젝트', 1195, 3.4, 99, 0], ['독서 토론', 1295, 4.7, 99, 2], ['생명존중 예방교육', 1372, -1, 6.1, 4]];
   deskBase(t, f, 1380 + u * 3, 470, 1.36); tintAll([255, 180, 110], .16);
   const isIn = it => v >= it[2] + .5 && v < it[3], n = items.filter(isIn).length;
   sheet(ctx, px, py, 210, 280, .02, { lines: 3, rows: 10, seed: 5, head: [190, 170, 236], label: '생기부', lpx: 24, labelUp: true });
@@ -99,7 +99,7 @@ function sceneYear(t, f, u) {
   for (const [t0, x, y, ch] of [[3.4, 1195, Yd - 150, '+'], [4.7, 1295, Yd - 150, '+'], [6.1, px - 130, py + 10, '−']]) if (v >= t0 && v < t0 + .7) { mark(x, y, ch, popK(v, t0), 'rgb(255,226,130)'); sparkle(ctx, x + 44, y - 20, 18 * popK(v, t0), 3); }
   const q1 = v > .5 && v < 3.1, a1 = v > 2.9 && v < 4.5, q2b = v > 5.4 && v < 7.2, end = v > 7.8;
   actor('dugeun', 1070, Yd, Sd, { look: a1 ? [.7, .2] : v > 4.5 && v < 5.4 ? [1, -.6] : [.9, -.3], expr: a1 || end || (v > 4.6 && v < 5.4) ? 'joy' : 'smile', aR: a1 || (v > 4.5 && v < 5.2) ? 2 : end ? 2.2 : .2, aL: end ? 2.2 : .2, sprout: a1 ? 1 : Math.sin(v * 3) * .4, hop: hopA(v, 3.4, .3, 20) + hopA(v, 4.7, .3, 20) + hopA(v, 7.9, .4, 28) + hopA(v, 8.6, .4, 20) });
-  actor('doran', 1500, Yd, Sd, { look: q1 ? [-.8, -.1] : q2b ? [.6, -.6] : [-.7, 0], expr: end || q2b ? 'joy' : 'smile', aL: q1 ? 1.7 : .2, aR: q2b ? 2.2 : end ? 2.2 : .2, lean: q1 ? -.08 : 0, hop: hopA(v, 6.1, .3, 18) + hopA(v, 8, .4, 24) });
+  actor('doran', 1545, Yd, Sd, { look: q1 ? [-.8, -.1] : q2b ? [.6, -.6] : [-.7, 0], expr: end || q2b ? 'joy' : 'smile', aL: q1 ? 1.7 : .2, aR: q2b ? 2.2 : end ? 2.2 : .2, lean: q1 ? -.08 : 0, hop: hopA(v, 6.1, .3, 18) + hopA(v, 8, .4, 24) });
   say(ctx, 1400, 372, ['진로에는 어떤 활동을', '더 담으면 좋을까?'], [222, 238, 250], q1 ? popK(v, .5) : 0, -1);
   say(ctx, 1100, 392, ['융합 프로젝트요!'], [255, 250, 232], a1 ? popK(v, 2.9) : 0, 1);
   say(ctx, 1430, 388, ['이건 빼도 되겠다'], [222, 238, 250], q2b ? popK(v, 5.4) : 0, -1);
@@ -107,7 +107,7 @@ function sceneYear(t, f, u) {
 }
 // everyone's feedback becomes next year's plan
 function scenePlan(t, f, u) {
-  const v = q2(u), G = 906, soil = [5090, 912]; cam.x = 5010 - 70 * (1 - sstep(u / 10)); cam.y = 690; cam.z = 1.25; WARM = .15; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0);
+  const v = q2(u), G = 906, soil = [5090, 912]; cam.x = 5010 - 70 * (1 - sstep(u / 10)); cam.y = 690; cam.z = 1.25; WARM = .15; CEL.lw = 3; CEL.amp = .9; begin(); img(BG.mead, 0, 0, 1, 0, 0, 1.3);
   const cast = [['doran', 4370], ['mongsil', 4540], ['dugeun', 4715], ['ttukttak', 4895]], done = v > 9.4;
   // student reviews (leaves) and teacher notes (pages) gather at the roots
   for (let i = 0; i < 6; i++) { const t0 = .3 + i * .32, e = clamp((v - t0) / 1.5, 0, 1); if (e <= 0 || v > 4.9) continue; const fromT = i % 2, sx = fromT ? (i % 4 === 1 ? 4420 : 4930) : 4760, x = lerp(sx, soil[0] + (i - 2.5) * 14, e) + Math.sin(e * 9 + i) * 30 * (1 - e), y = lerp(650, soil[1] - 8, e * e) - Math.sin(e * Math.PI) * (150 + i * 14), s = SCR(x, y); if (fromT) sheet(ctx, x, y, 44, 54, e < 1 ? Math.sin(e * 10 + i) : .2, { head: FLY[i % 5], lines: 2, seed: i, lw: .6, fore: e < 1 ? .4 + .6 * Math.abs(Math.cos(e * 9)) : .35 }); else drawLeaf(ctx, s[0], s[1], 24 * cam.z, e < 1 ? Math.sin(e * 12 + i) * 1.2 : .15 + i * .3, e < 1 ? Math.floor(v * 8) + i : 0, [[236, 196, 96], [196, 216, 96], [240, 160, 120]][(i / 2) | 0]); }
@@ -133,10 +133,14 @@ function endTitle(u) {
   if (v > te) for (let i = 0; i < 7; i++) { const a = (v - te) * .5 + i * .9, x = 360 + i * 200 + Math.sin(a * 2 + i) * 20, y = 400 - ((a * 60 + i * 37) % 300), k = popK(v, te + i * .12) * (1 - ((a * 60 + i * 37) % 300) / 300); if (k <= 0) continue; ctx.fillStyle = `rgba(255,150,150,${.85 * k})`; ctx.save(); ctx.translate(x, y); ctx.scale(k * .9, k * .9); ctx.beginPath(); ctx.moveTo(0, 20); ctx.bezierCurveTo(-34, -4, -14, -30, 0, -10); ctx.bezierCurveTo(14, -30, 34, -4, 0, 20); ctx.fill(); ctx.restore(); }
   const fd = ramp(u, 17.4, 19.4); if (fd > 0) { ctx.fillStyle = `rgba(255,242,216,${fd})`; ctx.fillRect(0, 0, W, H); }
 }
+const snapC = mkCanvas(W, H), snapG = snapC.getContext('2d'); let lastId = null, lastRF = -9, snapAt = -9;
 function render(t) {
   t = clamp(t, 0, END); const f = Math.floor(t * FPS + 1e-6), tf = f / FPS; let sh = SHOTS[0]; for (const s of SHOTS) if (s[0] <= tf + 1e-9) sh = s; const u = tf - sh[0], id = sh[1];
+  // soft dissolve from the last frame of the previous shot
+  if (lastId && id !== lastId && f === lastRF + 1) { if (snapC.width !== cv.width) { snapC.width = cv.width; snapC.height = cv.height; } snapG.drawImage(cv, 0, 0); snapAt = sh[0]; } else if (f !== lastRF + 1 && f !== lastRF) snapAt = -9; lastId = id; lastRF = f;
   ({ dawn: () => sceneExt(tf, f, u, 'dawn'), final: () => sceneExt(tf, f, u, 'final'), c1: () => sceneTalk1(tf, f, u), c2: () => sceneBusy(tf, f, u), pick: () => scenePick(tf, f, u), c3: () => sceneCounsel(tf, f, u), auto: () => sceneAuto(tf, f, u), class: () => sceneClass(tf, f, u), review: () => sceneReview(tf, f, u * 8 / 7), record: () => sceneRecord(tf, f, u), c4: () => sceneTalk2(tf, f, u), year: () => sceneYear(tf, f, u), plan: () => scenePlan(tf, f, u) })[id]();
-  ST(1, 0, 0, 1, 0, 0); subs(tf);
+  ST(1, 0, 0, 1, 0, 0); const dd = tf - snapAt; if (dd >= 0 && dd < .58) { ctx.globalAlpha = 1 - sstep(dd / .58); ctx.drawImage(snapC, 0, 0, W, H); ctx.globalAlpha = 1; }
+  subs(tf);
 }
 // ── music: bright, bouncy, hopeful (D major, about 100 bpm)
 function audioSchedule(t0) {
@@ -144,11 +148,10 @@ function audioSchedule(t0) {
   const D4 = 293.66, E4 = 329.63, F4 = 369.99, G4 = 392, A4 = 440, B4 = 493.88, C5 = 554.37, D5 = 587.33, E5 = 659.25, F5 = 739.99, G5 = 783.99, A5 = 880, B5 = 987.77, D6 = 1174.66, B = .3;
   const melA = [D5, 0, F5, A5, 0, F5, A5, B5, A5, 0, F5, D5, 0, E5, F5, 0, G5, 0, B5, D6, 0, B5, A5, G5, F5, 0, A5, E5, 0, 0, E5, F5], melB = [A5, 0, A5, B5, A5, 0, F5, 0, G5, 0, E5, F5, 0, D5, 0, 0, B4, 0, D5, G5, 0, B5, A5, G5, A5, 0, 0, E5, F5, G5, A5, 0];
   const CH = { D: [146.83, 220, D4, F4], G: [98, 246.94, D4, G4], A: [110, 220, 277.18, E4], Bm: [123.47, 246.94, D4, F4] }, prog = ['D', 'D', 'G', 'A', 'D', 'Bm', 'G', 'A'];
-  const kick = (w, v) => tone(w, .13, 'sine', 110, 46, [[0, 0], [.008, v], [.13, 0]]), hat = (w, v) => nz(w, .04, 'highpass', 7000, 9000, .7, [[0, 0], [.004, v], [.04, 0]]), snap = (w, v) => nz(w, .07, 'bandpass', 2000, 1500, 1.5, [[0, 0], [.005, v], [.07, 0]]);
+  const kick = (w, v) => tone(w, .2, 'sine', 92, 50, [[0, 0], [.03, v], [.2, 0]]);
   const groove = (ta, tb, lvl) => { for (let i = 0; ta + i * B < tb; i++) { const t = ta + i * B, bar = Math.floor(i / 8) % 8, pos = i % 8, c = CH[prog[bar]]; at(t, w => {
     const n = (bar < 4 ? melA : melB)[(bar % 4) * 8 + pos]; if (n && lvl > 0) { pluck(w, n, .05 * lvl, .55); if (lvl > 1.2) pluck(w, n / 2, .025, .5); }
-    if (pos === 0 || pos === 4) { pluck(w, c[0], .085, .5); if (lvl > .5) kick(w, .16); } if (pos === 2 || pos === 6) { pluck(w, c[2], .028, .22); pluck(w, c[3], .028, .22); if (lvl > .5) snap(w, .03); } if (pos === 7 && bar % 2) pluck(w, c[1], .04, .25);
-    if (lvl > .5) hat(w, pos % 2 ? .02 : .011); }); } };
+    if (pos === 0 || pos === 4) { pluck(w, c[0], .08, .6); if (lvl > .5) kick(w, .09); } if (pos === 2 || pos === 6) { pluck(w, c[2], .026, .4); pluck(w, c[3], .026, .4); } if (pos === 7 && bar % 2) pluck(w, c[1], .035, .4); }); } };
   // opening: bright arpeggio over a warm pad
   at(0, w => pad(w, 9, .03, [146.83, 220, F4, A4])); [D5, F5, A5, D6, A5, F5, G5, B5, D6, B5, A5, F5, E5, A5].forEach((n, i) => at(1.6 + i * .45, w => pluck(w, n, .05, 1.1))); at(5.9, w => pop(w, 520));
   // before: a lighter, slightly wistful vamp without drums
