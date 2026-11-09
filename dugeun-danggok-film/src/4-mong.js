@@ -38,7 +38,10 @@ function mong(ctx, kind, wx, wy, s, P) {
   if (kind === 'arong') { Cs([[43, -15, 1], [28, -15, 1], [28, 0, 1]], [244, 222, 150], null, { lw: .9 }); Ls([[-28, -20], [-12, -29], [6, -21], [26, -33]], { lw: 2.6, line: 'rgba(188,170,236,.9)', taper: 20 }); for (let i = 0; i < 5; i++) { const x = -32 + i * 16; Ls([[x, -80], [x - 4, -90], [x + 2, -96], [x + 6, -88]], { lw: .8, seed: 8 + i }); } const n = P.lines || 0; for (let i = 0; i < n; i++) Ls([[-30, -74 + i * 6], [-30 + 26 + hash(i) * 30, -74 + i * 6]], { lw: .5, line: 'rgba(110,110,130,.8)', seed: 20 + i }); }
   if (kind === 'chorong') { Cs(circ(0, -90, 41, 12, 13), P.lit ? [255, 250, 214] : [252, 246, 222], [236, 224, 190]); Cs([[-6, -24, 1], [6, -24, 1], [6, -10, 1], [-6, -10, 1]], [246, 216, 142], null, { lw: .8 }); }
   if (kind === 'salang') { Ls([[0, -2], [0, -104]], { lw: .5, line: 'rgba(120,190,140,.9)' }); Ls([[-45, -52], [45, -52]], { lw: .5, line: 'rgba(120,190,140,.9)' }); }
-  if (kind === 'dugeun' && P.band) { clipTo(ctx, bp); Cs([[-50, -80], [50, -72], [50, -62], [-50, -70]], [250, 250, 246], null, { lw: .8 }); ctx.restore(); Cs(circ(0, -72, 6, 7), [236, 110, 100], null, { lw: .6 }); }
+  if (kind === 'dugeun' && P.band !== false) {   // the 낭만당곡 headband
+    Cs([[36, -74, 1], [58, -70], [64, -58, 1], [44, -64]], [250, 250, 246], [222, 222, 228], { lw: .8, seed: 70 }); Cs([[38, -70, 1], [54, -56], [52, -46, 1], [38, -60]], [250, 250, 246], [222, 222, 228], { lw: .8, seed: 71 });
+    clipTo(ctx, bp); Cs([[-50, -88], [50, -82], [50, -60], [-50, -66]], [252, 251, 246], null, { lw: .85, seed: 72 }); ctx.restore();
+    const c = M(f, [0, -74]); ctx.save(); ctx.translate(c[0], c[1]); ctx.rotate((P.lean || 0) + .06); ctx.font = `700 ${15.5 * s * z * sq}px ${FONT2}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'rgb(206,66,58)'; ctx.fillText('낭만당곡', 0, 0); ctx.restore(); }
   // arms
   for (const m of [-1, 1]) { const a = .45 + (m < 0 ? (P.aL == null ? .2 : P.aL) : (P.aR == null ? .2 : P.aR)), sx = m * d.hw * .93, sy = d.fy + 8, ex = sx + m * Math.sin(a) * 27, ey = sy + Math.cos(a) * 27; Ls([[sx, sy], [sx + m * Math.sin(a + .25) * 14, sy + Math.cos(a + .25) * 14], [ex, ey]], { seed: 30 + m }); const h = M(f, [ex, ey]); ctx.fillStyle = LN; ctx.beginPath(); ctx.arc(h[0], h[1], 3.4 * s * z, 0, TAU); ctx.fill(); if (m > 0) P.handR = FWp(f, [ex, ey]); else P.handL = FWp(f, [ex, ey]); }
   // face
@@ -96,3 +99,16 @@ function sparkle(ctx, wx, wy, r, seed, col) { const s = SCR(wx, wy), z = cam.z; 
 function leafPts(x, y, len, wid, ang) { const c = Math.cos(ang), s = Math.sin(ang), q = (a, b) => [x + a * c - b * s, y + a * s + b * c]; return [q(len / 2, 0).concat(1), q(len * .1, -wid / 2), q(-len / 2, 0).concat(1), q(-len * .05, wid / 2)]; }
 function drawLeaf(ctx, sx, sy, size, rot, phase, col) { const w = [1, .62, .16, .62][phase & 3], back = (phase & 3) >= 2, c = col || (back ? [150, 176, 70] : [196, 216, 96]); cel(ctx, leafPts(sx, sy, size * 2, size * w, rot), { fill: tint(c), lw: size > 7 ? .45 : .3, seed: phase, step: 5, line: 'rgb(60,80,46)' }); }
 function flowerC(ctx, wx, wy, k, seed) { if (k <= 0) return; const cols = [[250, 244, 226], [248, 216, 110], [240, 172, 186], [176, 176, 232]], c = cols[seed % 4], hgt = (16 + hash(seed) * 14) * k, top = [wx + (hash(seed * 3) - .5) * 6, wy - hgt]; cel(ctx, [SCR(wx, wy), SCR(top[0], top[1])], { closed: false, lw: .5, line: 'rgb(70,120,64)', seed }); const s = SCR(top[0], top[1]), r = 5.5 * k * cam.z; ctx.fillStyle = tint(c); for (let i = 0; i < 5; i++) { const a = i / 5 * TAU + seed; ctx.beginPath(); ctx.arc(s[0] + Math.cos(a) * r * .8, s[1] + Math.sin(a) * r * .8, r * .62, 0, TAU); ctx.fill(); } ctx.fillStyle = 'rgb(236,160,70)'; ctx.beginPath(); ctx.arc(s[0], s[1], r * .45, 0, TAU); ctx.fill(); }
+
+function say(ctx, wx, wy, lines, col, k, dir) {
+  if (k <= 0) return; const n = lines.length, len = Math.max(...lines.map(l => l.length)), w = (40 + len * 25) * k, h = (30 + n * 36) * k, d = dir || 1, tx = wx - d * w * .22;
+  cel(ctx, [SCR(wx - w / 2, wy - h / 2 + 8), SCR(wx - w / 2 + 10, wy - h / 2), SCR(wx, wy - h / 2 - 4), SCR(wx + w / 2 - 10, wy - h / 2), SCR(wx + w / 2, wy - h / 2 + 8), SCR(wx + w / 2 + 6, wy), SCR(wx + w / 2, wy + h / 2 - 8), SCR(wx + w / 2 - 10, wy + h / 2), SCR(tx + 16, wy + h / 2 + 2), SCR(tx - d * 6, wy + h / 2 + 30 * k, 1), SCR(tx - 14, wy + h / 2 + 2), SCR(wx - w / 2 + 10, wy + h / 2), SCR(wx - w / 2, wy + h / 2 - 8), SCR(wx - w / 2 - 6, wy)], { fill: tint(col || [255, 252, 240]), lw: 1, seed: len * 3 + n, step: 8 });
+  if (k > .85) lines.forEach((l, i) => wtext(ctx, wx, wy + (i - (n - 1) / 2) * 36, l, 28, 'rgb(64,54,56)'));
+}
+function chart(ctx, wx, wy, kind, k, ttl) {
+  if (k <= 0) return; const w = 150 * k, h = 196 * k; sheet(ctx, wx, wy, w, h, kind ? .03 : -.03, { lines: 0, seed: 50 + kind, lw: .9 }); if (k < .5) return;
+  wtext(ctx, wx, wy - 76 * k, ttl, 19 * k, 'rgb(70,64,70)'); const s = SCR(wx, wy + 70 * k), z = cam.z * k; ctx.save(); ctx.translate(s[0], s[1]); ctx.scale(z, z);
+  ctx.strokeStyle = 'rgb(96,92,104)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-56, 0); ctx.lineTo(56, 0); ctx.stroke();
+  const bars = kind ? [[-46, 92, 'rgb(240,150,120)'], [-24, 44, 'rgb(246,206,130)'], [10, 40, 'rgb(126,170,226)'], [32, 38, 'rgb(170,204,236)']] : [[-44, 104, 'rgb(126,170,226)'], [-10, 70, 'rgb(240,150,120)'], [24, 38, 'rgb(150,200,150)']];
+  for (const [x, b, c] of bars) { ctx.fillStyle = c; ctx.fillRect(x, -b, kind ? 18 : 24, b); } ctx.restore();
+}
